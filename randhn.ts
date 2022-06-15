@@ -1,5 +1,5 @@
 import { serve } from "https://deno.land/std@0.119.0/http/server.ts";
-import { Status } from "https://deno.land/std/http/http_status.ts";
+import { Status } from "https://deno.land/std@0.143.0/http/http_status.ts";
 
 const topHNStoriesURL =
   "https://hacker-news.firebaseio.com/v0/topstories.json?print=pretty";
@@ -20,7 +20,7 @@ const fetchStories = async function (url: string): Promise<number[]> {
 
 const handler = async function (req: Request): Promise<Response> {
   const topReq = fetchStories(topHNStoriesURL);
-  const newReq = fetchStories(topHNStoriesURL);
+  const newReq = fetchStories(newHNStoriesURL);
   const [topStories, newStories] = await Promise.all([topReq, newReq]);
   // union the two arrays
   const stories = [...topStories, ...newStories];
