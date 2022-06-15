@@ -40,7 +40,7 @@ const handler = async function (req: Request): Promise<Response> {
 
   switch (new URL(req.url).pathname) {
     case "/":
-      return Response.redirect(story["url"], 301);
+      return Response.redirect(story["url"], 302);
     case "/json":
       return Response.json(story);
     default:
