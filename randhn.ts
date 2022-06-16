@@ -1,8 +1,8 @@
-import { serve } from 'https://deno.land/std@0.119.0/http/server.ts';
-import { Status } from 'https://deno.land/std@0.143.0/http/http_status.ts';
-import { Client } from 'https://deno.land/x/axiom@v0.1.0alpha5/client.ts';
+import { serve } from "https://deno.land/std@0.119.0/http/server.ts";
+import { Status } from "https://deno.land/std@0.143.0/http/http_status.ts";
+import { Client } from "https://deno.land/x/axiom@v0.1.0alpha6/client.ts";
 
-import { handleHTML } from './stumble.tsx';
+import { handleHTML } from "./stumble.tsx";
 
 const topHNStoriesURL =
   "https://hacker-news.firebaseio.com/v0/topstories.json?print=pretty";
@@ -36,7 +36,7 @@ const handler = async function (req: Request): Promise<Response> {
   const stories = [...topStories, ...newStories];
   // dedup the array
   const dedupedStories = stories.filter(
-    (item, index) => stories.indexOf(item) === index
+    (item, index) => stories.indexOf(item) === index,
   );
 
   // pick random story
@@ -70,11 +70,6 @@ const handler = async function (req: Request): Promise<Response> {
     .ingest({
       events: [handlerAttr],
       dataset: "randhn",
-    })
-    .then((resp) => {
-      if (resp.status != Status.OK) {
-        console.error(resp);
-      }
     })
     .catch((e) => {
       console.error(e);
