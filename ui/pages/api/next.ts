@@ -32,33 +32,5 @@ async function getStory(kind: string): Promise<APIResult | undefined> {
       },
     }
   );
-  const apiRes: APIResult = await res.json();
-
-  if (!apiRes.story.url) {
-    return undefined;
-  }
-
-  const headRes = await fetch(apiRes.story.url, { method: "HEAD" });
-  if (headRes.status !== 200) {
-    return undefined;
-  }
-
-  let crap = false;
-
-  headRes.headers.forEach((value, key) => {
-    key = key.toLowerCase();
-    value = value.toLowerCase();
-
-    if (key === "x-frame-options") {
-      if (value.indexOf("sameorigin") >= 0 || value.indexOf("deny") >= 0) {
-        crap = true;
-      }
-    } else if (key === "content-security-policy") {
-      if (value.indexOf("frame-ancestors") >= 0) {
-        crap = true;
-      }
-    }
-  });
-
-  return crap ? undefined : apiRes;
+  return await res.json();
 }

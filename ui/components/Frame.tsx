@@ -18,7 +18,6 @@ export const Frame = ({ className, url }: FrameProps) => {
       }}
       src={url}
       title="description"
-      sandbox=""
     ></iframe>
   );
 };
