@@ -1,6 +1,8 @@
-import { serve } from "https://deno.land/std@0.119.0/http/server.ts";
-import { Status } from "https://deno.land/std@0.143.0/http/http_status.ts";
-import { Client } from "https://deno.land/x/axiom@v0.1.0alpha5/client.ts";
+import { serve } from 'https://deno.land/std@0.119.0/http/server.ts';
+import { Status } from 'https://deno.land/std@0.143.0/http/http_status.ts';
+import { Client } from 'https://deno.land/x/axiom@v0.1.0alpha5/client.ts';
+
+import { handleHTML } from './stumble.tsx';
 
 const topHNStoriesURL =
   "https://hacker-news.firebaseio.com/v0/topstories.json?print=pretty";
@@ -33,28 +35,23 @@ const handler = async function (req: Request): Promise<Response> {
   // union the two arrays
   const stories = [...topStories, ...newStories];
   // dedup the array
-  const dedupedStories = stories.filter((item, index) =>
-    stories.indexOf(item) === index
+  const dedupedStories = stories.filter(
+    (item, index) => stories.indexOf(item) === index
   );
 
   // pick random story
   const randID =
     dedupedStories[Math.floor(Math.random() * dedupedStories.length)];
   // fetch the story
-  const storyReq = await fetch(
-    HNItemURL.replace("{id}", randID.toString()),
-  );
+  const storyReq = await fetch(HNItemURL.replace("{id}", randID.toString()));
   const story = await storyReq.json();
   // return the story
 
   const handlerAttr = {
     _time: new Date(now).toISOString(),
     req: {
-      isHistoryNavigation: req.isHistoryNavigation,
-      isReloadNavigation: req.isReloadNavigation,
       method: req.method,
       referrer: req.referrer,
-      body: await req.text(),
       url: req.url,
       headers: {
         contentType: req.headers.get("content-type") ?? undefined,
@@ -69,22 +66,32 @@ const handler = async function (req: Request): Promise<Response> {
     story: story,
   };
 
-  axiom.ingest({
-    events: [handlerAttr],
-    dataset: "randhn",
-  }).then((resp) => {
-    if (resp.status != Status.OK) {
-      console.error(resp);
-    }
-  }).catch((e) => {
-    console.error(e);
-  });
+  axiom
+    .ingest({
+      events: [handlerAttr],
+      dataset: "randhn",
+    })
+    .then((resp) => {
+      if (resp.status != Status.OK) {
+        console.error(resp);
+      }
+    })
+    .catch((e) => {
+      console.error(e);
+    });
 
   switch (path) {
     case "/":
       return Response.redirect(story["url"], 302);
     case "/json":
-      return Response.json(story);
+      return new Response(JSON.stringify(story, null, 2), {
+        headers: {
+          "content-type": "application/json; charset=utf-8",
+        },
+      });
+    case "/html":
+      return handleHTML(story);
+
     default:
       // return 404
       return new Response(null, {
