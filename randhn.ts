@@ -103,7 +103,7 @@ const getRandomHNStory = async function (
   const fetches = [];
 
   switch (topic) {
-    case null:
+    case null || "random":
       fetches.push(
         fetchFromHN(topHNStoriesURL),
         fetchFromHN(newHNStoriesURL),
