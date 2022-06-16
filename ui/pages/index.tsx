@@ -23,6 +23,10 @@ class Home extends React.Component<NextPage, HomeState> {
     };
   }
 
+  componentDidMount = () => {
+    this.loadStory("top");
+  };
+
   render() {
     const { currentStory, lastError, currentStats, loading } = this.state;
     return (
@@ -55,7 +59,7 @@ class Home extends React.Component<NextPage, HomeState> {
     });
 
     try {
-      const res = await fetch("/api/next", {
+      const res = await fetch(`/api/next?kind=${storyType}`, {
         method: "GET",
         headers: {
           "Accept-Encoding": "application/json",

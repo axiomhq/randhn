@@ -10,6 +10,15 @@ interface SidebarProps {
 
 export const Sidebar = ({ className, stats, story }: SidebarProps) => {
   const host = story ? new URL(story.url).host : "unknown";
+  let ago = "";
+
+  if (story?.time) {
+    const t = new Date(1970, 0, 1);
+    t.setSeconds(story.time - t.getTimezoneOffset() * 60);
+    console.log("date", t);
+
+    ago = timeSince(t.getTime() / 1000);
+  }
   return (
     <aside
       className={`${className} font-mono p-4 space-y-4`}
@@ -23,11 +32,46 @@ export const Sidebar = ({ className, stats, story }: SidebarProps) => {
       {story?.by ? (
         <div className="flex flex-col mb-4 space-y-1">
           <label className="uppercase text-xs font-bold text-orange-800 opacity-60">
-            Submitted By
+            Submission
           </label>
-          <a href={`https://news.ycombinator.com/user?id=${story?.by}`}>
-            {story?.by}
-          </a>
+          <span className="flex items-center justify-between">
+            <a
+              className={`text-black hover:text-orange-500 hover:underline flex items-center`}
+              href={`https://news.ycombinator.com/user?id=${story?.by}`}
+              target="_blank"
+              rel="noopener"
+            >
+              <span>{story?.by} </span>
+              <span className="mt-1 ml-1 opacity-50">
+                <svg width="1em" height="1em" fill="none" viewBox="0 0 24 24">
+                  <path
+                    stroke="currentColor"
+                    stroke-linecap="round"
+                    stroke-linejoin="round"
+                    stroke-width="1.5"
+                    d="M9.25 4.75H6.75C5.64543 4.75 4.75 5.64543 4.75 6.75V17.25C4.75 18.3546 5.64543 19.25 6.75 19.25H17.25C18.3546 19.25 19.25 18.3546 19.25 17.25V14.75"
+                  ></path>
+                  <path
+                    stroke="currentColor"
+                    stroke-linecap="round"
+                    stroke-linejoin="round"
+                    stroke-width="1.5"
+                    d="M19.25 9.25V4.75H14.75"
+                  ></path>
+                  <path
+                    stroke="currentColor"
+                    stroke-linecap="round"
+                    stroke-linejoin="round"
+                    stroke-width="1.5"
+                    d="M19 5L11.75 12.25"
+                  ></path>
+                </svg>
+              </span>
+            </a>
+            <span className="text-xs text-grey-700 opacity-40">
+              [{ago} ago]
+            </span>
+          </span>
         </div>
       ) : null}
       <div className="flex flex-col space-y-4">
@@ -73,3 +117,33 @@ const SidebarSection = ({ title, refs }: SidebarSectionProps) => {
     </div>
   );
 };
+
+function timeSince(seconds: number): string {
+  let now = Date.now() / 1000;
+  console.log(seconds, now, seconds < now);
+  seconds = now - seconds;
+  console.log(seconds);
+
+  let interval = seconds / 31536000;
+  if (interval > 1) {
+    return Math.floor(interval) + "y";
+  }
+  interval = seconds / 2592000;
+  console.log(seconds);
+  if (interval > 1) {
+    return Math.floor(interval) + "mo";
+  }
+  interval = seconds / 86400;
+  console.log(seconds);
+  if (interval > 1) {
+    return Math.floor(interval) + "d";
+  }
+  interval = seconds / 3600;
+  console.log(seconds);
+  if (interval > 1) {
+    return Math.floor(interval) + "h";
+  }
+  interval = seconds / 60;
+  console.log(seconds);
+  return Math.floor(interval) + " m";
+}

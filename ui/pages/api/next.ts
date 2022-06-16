@@ -23,12 +23,15 @@ export default async function handler(
 }
 
 async function getStory(kind: string): Promise<APIResult | undefined> {
-  const res = await fetch(`https://randhn.deno.dev/json?kind=${kind}`, {
-    method: "GET",
-    headers: {
-      "Accept-Encoding": "application/json",
-    },
-  });
+  const res = await fetch(
+    `https://randhn.deno.dev/json?kind=${kind}&canFrame=true`,
+    {
+      method: "GET",
+      headers: {
+        "Accept-Encoding": "application/json",
+      },
+    }
+  );
   const apiRes: APIResult = await res.json();
 
   if (!apiRes.story.url) {
