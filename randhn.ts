@@ -248,16 +248,80 @@ async function getUserStats(story: HNItem): Promise<UserActivity> {
   return dict;
 }
 
+async function checkFrame(story: HNItem): Promise<boolean> {
+  const headRes = await fetch(story.url, { method: "HEAD" });
+  if (headRes.status !== 200) {
+    return false;
+  }
+
+  let crap = false;
+
+  headRes.headers.forEach((value, key) => {
+    key = key.toLowerCase();
+    value = value.toLowerCase();
+
+    if (key === "x-frame-options") {
+      if (value.indexOf("sameorigin") >= 0 || value.indexOf("deny") >= 0) {
+        crap = true;
+      }
+    } else if (key === "content-security-policy") {
+      if (value.indexOf("frame-ancestors") >= 0) {
+        crap = true;
+      }
+    }
+  });
+
+  return !crap;
+}
+
 async function handler(req: Request): Promise<Response> {
   const url = new URL(req.url);
   const path = url.pathname;
   const kind = url.searchParams.get("kind") ?? "random";
   const hasStats = url.searchParams.get("stats") ?? "true";
+  const canFrame = url.searchParams.get("canFrame") ?? "false";
   const now = Date.now();
-  const selection = await getRandomHNStory(kind);
+  let selection: Selection = {
+    minStoryID: 0,
+    maxStoryID: 0,
+    distinctStoriesLength: 0,
+    story: {
+      id: 0,
+      title: "",
+      url: "",
+      by: "",
+      time: 0,
+      kids: [],
+      score: 0,
+      type: "",
+      descendants: 0,
+    },
+  };
+
+  // if selection.story is undefined, try again up to 5 times
+  for (let i = 0; i < 5; i++) {
+    selection = await getRandomHNStory(kind);
+    // check if story is valid
+    console.log("got story:", selection.story.url);
+    if (!selection.story.url) {
+      console.log("got empty story, trying again:", selection.story.url);
+      continue;
+    }
+
+    // check if can be framed
+    if (canFrame === "true") {
+      console.log("checking if can be framed:", selection.story.url);
+      const valid = await checkFrame(selection.story);
+      if (!valid) {
+        console.log("invalid frame:", selection.story.url);
+        continue;
+      }
+      console.log("valid frame:", selection.story.url);
+      break;
+    }
+  }
 
   let stats = {};
-
   if (hasStats == "true") {
     const userStatsReq = getUserStats(selection.story);
     const domainSiblingsReq = getDomainStories(selection.story);
