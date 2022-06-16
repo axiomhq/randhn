@@ -204,15 +204,11 @@ const getDomainStories = async function (
     const ev = event as AxiomEvent;
     if (!deduper.has(ev.data.url ?? "")) {
       siblings.push(event as AxiomEvent);
+      deduper.add(ev.data.url ?? "");
     }
   }
 
-  // dedup siblings by AxiomEvent url
-  const dedupedSiblings = siblings.filter(
-    (item, index) => siblings.indexOf(item) === index,
-  );
-
-  return dedupedSiblings;
+  return siblings;
 };
 
 interface UserActivity {
