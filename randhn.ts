@@ -2,8 +2,6 @@ import { serve } from "https://deno.land/std@0.119.0/http/server.ts";
 import { Status } from "https://deno.land/std@0.143.0/http/http_status.ts";
 import { Client } from "https://deno.land/x/axiom@v0.1.0alpha6/client.ts";
 
-import { handleHTML } from "./stumble.tsx";
-
 const topHNStoriesURL =
   "https://hacker-news.firebaseio.com/v0/topstories.json?print=pretty";
 const newHNStoriesURL =
@@ -13,7 +11,31 @@ const HNItemURL =
 
 const axiom = new Client();
 
-const fetchStories = async function (url: string): Promise<number[]> {
+interface HNItem {
+  by: string;
+  descendants: number;
+  id: number;
+  kids: number[];
+  score: number;
+  time: number;
+  title: string;
+  type: string;
+  url: string;
+
+  text?: string;
+  parent?: number;
+  dead?: boolean;
+  deleted?: boolean;
+}
+
+interface Selection {
+  minStoryID: number;
+  maxStoryID: number;
+  distinctStoriesLength: number;
+  story: HNItem;
+}
+
+const fetchFromHN = async function (url: string): Promise<number[]> {
   try {
     const resp = await fetch(url);
     return await resp.json();
@@ -23,13 +45,41 @@ const fetchStories = async function (url: string): Promise<number[]> {
   }
 };
 
-const handler = async function (req: Request): Promise<Response> {
-  const now = Date.now();
-
+const notifyAxiom = async function (
+  now: number,
+  req: Request,
+  sel: Selection,
+): Promise<void> {
   const path = new URL(req.url).pathname;
+  const handlerAttr = {
+    _time: new Date(now).toISOString(),
+    req: {
+      method: req.method,
+      referrer: req.referrer,
+      url: req.url,
+      headers: {
+        contentType: req.headers.get("content-type") ?? undefined,
+        userAgent: req.headers.get("user-agent") ?? "Unknown",
+      },
+    },
+    path: path,
+    attrDuration: Date.now() - now,
+    ...sel,
+  };
 
-  const topReq = fetchStories(topHNStoriesURL);
-  const newReq = fetchStories(newHNStoriesURL);
+  await axiom
+    .ingest({
+      events: [handlerAttr],
+      dataset: "randhn",
+    })
+    .catch((e) => {
+      console.error(e);
+    });
+};
+
+const getRandomHNStory = async function (): Promise<Selection> {
+  const topReq = fetchFromHN(topHNStoriesURL);
+  const newReq = fetchFromHN(newHNStoriesURL);
   const [topStories, newStories] = await Promise.all([topReq, newReq]);
 
   // union the two arrays
@@ -46,46 +96,30 @@ const handler = async function (req: Request): Promise<Response> {
   const storyReq = await fetch(HNItemURL.replace("{id}", randID.toString()));
   const story = await storyReq.json();
   // return the story
-
-  const handlerAttr = {
-    _time: new Date(now).toISOString(),
-    req: {
-      method: req.method,
-      referrer: req.referrer,
-      url: req.url,
-      headers: {
-        contentType: req.headers.get("content-type") ?? undefined,
-        userAgent: req.headers.get("user-agent") ?? "Unknown",
-      },
-    },
-    path: path,
-    attrDuration: Date.now() - now,
+  return {
     minStoryID: dedupedStories[0],
     maxStoryID: dedupedStories[dedupedStories.length - 1],
     distinctStoriesLength: dedupedStories.length,
-    story: story,
+    story,
   };
+};
 
-  axiom
-    .ingest({
-      events: [handlerAttr],
-      dataset: "randhn",
-    })
-    .catch((e) => {
-      console.error(e);
-    });
+const handler = async function (req: Request): Promise<Response> {
+  const path = new URL(req.url).pathname;
+  const now = Date.now();
+  const selection = await getRandomHNStory();
+
+  await notifyAxiom(now, req, selection);
 
   switch (path) {
     case "/":
-      return Response.redirect(story["url"], 302);
+      return Response.redirect(selection.story.url, 302);
     case "/json":
-      return new Response(JSON.stringify(story, null, 2), {
+      return new Response(JSON.stringify(selection.story, null, 2), {
         headers: {
           "content-type": "application/json; charset=utf-8",
         },
       });
-    case "/html":
-      return handleHTML(story);
 
     default:
       // return 404
