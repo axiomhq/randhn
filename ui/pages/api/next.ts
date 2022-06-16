@@ -1,46 +1,50 @@
 // Next.js API route support: https://nextjs.org/docs/api-routes/introduction
 import type { NextApiRequest, NextApiResponse } from "next";
-import { Story } from '../../store/types';
+import { APIResult, Story } from '../../store/types';
 
 export default async function handler(
   req: NextApiRequest,
-  res: NextApiResponse<Story>
+  res: NextApiResponse<APIResult>
 ) {
-  let story: Story | undefined;
+  const kind = (req.query.kind as string) ?? "random";
 
-  while (!story) {
-    story = await getStory("random");
+  let result: APIResult | undefined;
+
+  for (let i = 0; i < 10; i++) {
+    result = await getStory(kind);
+    if (result) break;
   }
 
-  if (story) {
-    res.status(200).json(story);
+  if (result) {
+    res.status(200).json(result);
   } else {
     res.status(500);
   }
 }
 
-async function getStory(kind: string): Promise<Story | undefined> {
-  const result = await fetch(`https://randhn.deno.dev/json?kind=${kind}`, {
+async function getStory(kind: string): Promise<APIResult | undefined> {
+  const res = await fetch(`https://randhn.deno.dev/json?kind=${kind}`, {
     method: "GET",
     headers: {
       "Accept-Encoding": "application/json",
     },
   });
-  const story: Story = await result.json();
+  const apiRes: APIResult = await res.json();
 
-  const res = await fetch(story.url, { method: "HEAD" });
-  if (res.status !== 200) {
+  if (!apiRes.story.url) {
+    return undefined;
+  }
+
+  const headRes = await fetch(apiRes.story.url, { method: "HEAD" });
+  if (headRes.status !== 200) {
     return undefined;
   }
 
   let crap = false;
 
-  console.log("\n\n", story.url);
-  res.headers.forEach((value, key) => {
+  headRes.headers.forEach((value, key) => {
     key = key.toLowerCase();
     value = value.toLowerCase();
-
-    console.log(key, value);
 
     if (key === "x-frame-options") {
       if (value.indexOf("sameorigin") >= 0 || value.indexOf("deny") >= 0) {
@@ -53,5 +57,5 @@ async function getStory(kind: string): Promise<Story | undefined> {
     }
   });
 
-  return crap ? undefined : story;
+  return crap ? undefined : apiRes;
 }

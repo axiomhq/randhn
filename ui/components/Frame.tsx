@@ -2,11 +2,13 @@ import React from 'react';
 
 interface FrameProps {
   url?: string;
+  className?: string;
 }
 
-export const Frame = ({ url }: FrameProps) => {
+export const Frame = ({ className, url }: FrameProps) => {
   return (
     <iframe
+      className={className}
       style={{
         width: "100%",
         height: "calc(100vh - 32px)",
