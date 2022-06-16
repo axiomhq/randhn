@@ -50,12 +50,12 @@ interface AxiomEvent {
   };
 }
 
-const fetchEmpty = async function (): Promise<number[]> {
+async function fetchEmpty(): Promise<number[]> {
   await new Promise((resolve) => setTimeout(resolve, 0));
   return [];
-};
+}
 
-const fetchFromHN = async function (url: string): Promise<number[]> {
+async function fetchFromHN(url: string): Promise<number[]> {
   try {
     const resp = await fetch(url);
     return await resp.json();
@@ -63,9 +63,9 @@ const fetchFromHN = async function (url: string): Promise<number[]> {
     console.error(e);
     throw e;
   }
-};
+}
 
-const notifyAxiom = async function (
+async function notifyAxiom(
   now: number,
   req: Request,
   sel: Selection,
@@ -95,13 +95,10 @@ const notifyAxiom = async function (
     .catch((e) => {
       console.error(e);
     });
-};
+}
 
-const getRandomHNStory = async function (
-  topic?: string | null,
-): Promise<Selection> {
+async function getRandomHNStory(topic: string | null): Promise<Selection> {
   const fetches = [];
-
   switch (topic) {
     case null || "random":
       fetches.push(
@@ -171,13 +168,11 @@ const getRandomHNStory = async function (
     distinctStoriesLength: dedupedStories.length,
     story,
   };
-};
+}
 
 type DomainSiblings = AxiomEvent[];
 
-const getDomainStories = async function (
-  story: HNItem,
-): Promise<DomainSiblings> {
+async function getDomainStories(story: HNItem): Promise<DomainSiblings> {
   console.log("finding domain siblings for:", story.url);
 
   if (story.url === undefined) {
@@ -209,7 +204,7 @@ const getDomainStories = async function (
   }
 
   return siblings;
-};
+}
 
 interface UserActivity {
   show: AxiomEvent[];
@@ -218,7 +213,7 @@ interface UserActivity {
   story: AxiomEvent[];
 }
 
-const getUserStats = async function (story: HNItem): Promise<UserActivity> {
+async function getUserStats(story: HNItem): Promise<UserActivity> {
   const userQueryStr = `
   ['hackernews']
   | where _time >= now(-90d)
@@ -251,12 +246,12 @@ const getUserStats = async function (story: HNItem): Promise<UserActivity> {
   });
 
   return dict;
-};
+}
 
-const handler = async function (req: Request): Promise<Response> {
+async function handler(req: Request): Promise<Response> {
   const url = new URL(req.url);
   const path = url.pathname;
-  const kind = url.searchParams.get("kind");
+  const kind = url.searchParams.get("kind") ?? "random";
   const hasStats = url.searchParams.get("stats") ?? "true";
   const now = Date.now();
   const selection = await getRandomHNStory(kind);
@@ -279,7 +274,6 @@ const handler = async function (req: Request): Promise<Response> {
   }
 
   // dedup domainSiblings based on url
-
   await notifyAxiom(now, req, selection);
 
   switch (path) {
@@ -308,6 +302,6 @@ const handler = async function (req: Request): Promise<Response> {
         status: Status.NotFound,
       });
   }
-};
+}
 
 serve(handler);
