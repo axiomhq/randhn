@@ -105,28 +105,28 @@ export const Sidebar = ({ className, stats, story, user }: SidebarProps) => {
                   stroke="currentColor"
                   strokeLinecap="round"
                   strokeLinejoin="round"
-                  stroke-width="1.5"
+                  strokeWidth="1.5"
                   d="M4.75 8.75C4.75 7.64543 5.64543 6.75 6.75 6.75H17.25C18.3546 6.75 19.25 7.64543 19.25 8.75V17.25C19.25 18.3546 18.3546 19.25 17.25 19.25H6.75C5.64543 19.25 4.75 18.3546 4.75 17.25V8.75Z"
                 ></path>
                 <path
                   stroke="currentColor"
                   strokeLinecap="round"
                   strokeLinejoin="round"
-                  stroke-width="1.5"
+                  strokeWidth="1.5"
                   d="M8 4.75V8.25"
                 ></path>
                 <path
                   stroke="currentColor"
                   strokeLinecap="round"
                   strokeLinejoin="round"
-                  stroke-width="1.5"
+                  strokeWidth="1.5"
                   d="M16 4.75V8.25"
                 ></path>
                 <path
                   stroke="currentColor"
                   strokeLinecap="round"
                   strokeLinejoin="round"
-                  stroke-width="1.5"
+                  strokeWidth="1.5"
                   d="M7.75 10.75H16.25"
                 ></path>
               </svg>
@@ -145,7 +145,7 @@ export const Sidebar = ({ className, stats, story, user }: SidebarProps) => {
                 }}
               >
                 <div
-                  className={`text-orange-900 break-words max-h-32 overflow-y-auto scroll-y-none`}
+                  className={`text-orange-900 breakWords max-h-32 overflow-y-auto scroll-y-none`}
                   dangerouslySetInnerHTML={{
                     __html: urlify(user.about || ""),
                   }}
@@ -197,7 +197,7 @@ const SidebarSection = ({ title, refs }: SidebarSectionProps) => {
         {refs.map((ref) => (
           <li key={ref.data.url} className="mt-1">
             <a
-              className="block border-2 border-orange-700 border-opacity-10 hover:border-opacity-20 rounded transition-colors bg-owhite hover:bg-white p-2"
+              className="block border-2 border-orange-700 border-opacity-10 hover:border-opacity-20 rounded transition-colors bg-owhite hover:bgWhite p-2"
               style={{
                 /*backgroundColor: "rgba(255, 251, 247, 1.00)",*/
                 filter: "drop-shadow(0 2px 1px rgba(196, 131, 110, 0.1))",
