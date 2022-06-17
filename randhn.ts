@@ -238,8 +238,7 @@ async function getDomainStories(story: HNItem): Promise<DomainSiblings> {
   ['hackernews']
   | where _time >= now(-90d)
   | where type == "story" and url startswith "https://${domain}" and id != ${story.id}
-  | extend xType = "story"
-  | project title, url, ref, xType
+  | project title, url
   | take 100
   `;
 
@@ -334,6 +333,7 @@ async function checkFrame(story: HNItem): Promise<boolean> {
 
     return !crap;
   } catch (e) {
+    console.log(e);
     return false;
   }
 }
@@ -362,16 +362,16 @@ async function handler(req: Request): Promise<Response> {
 
   if (hasStats == "true" && selection) {
     const userStatsReq = getUserStats(selection.story);
-    //const domainSiblingsReq = getDomainStories(selection.story);
+    const domainSiblingsReq = getDomainStories(selection.story);
 
-    const [userStats] = await Promise.all([
+    const [userStats, domainSiblings] = await Promise.all([
       userStatsReq,
-      //domainSiblingsReq,
+      domainSiblingsReq,
     ]);
 
     stats = {
       userStats: userStats,
-      //domainSiblings: domainSiblings,
+      domainSiblings: domainSiblings,
     };
   }
 
