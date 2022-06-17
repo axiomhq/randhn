@@ -116,7 +116,7 @@ async function getRandomHNStories(
 ): Promise<Selection[]> {
   const fetches = [];
   switch (topic) {
-    case null || "random":
+    case "random":
       fetches.push(
         fetchFromHN(topHNStoriesURL),
         fetchFromHN(newHNStoriesURL),
@@ -125,7 +125,7 @@ async function getRandomHNStories(
         fetchFromHN(bestHNStoriesURL),
       );
       break;
-    case "top":
+    case "top" || null:
       fetches.push(
         fetchFromHN(topHNStoriesURL),
         fetchEmpty(),
