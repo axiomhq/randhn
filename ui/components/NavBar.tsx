@@ -1,3 +1,4 @@
+import { useRouter } from 'next/router';
 import React, { useState } from 'react';
 
 import { LoadStoryFunc, StoryKind } from '../store/types';
@@ -21,7 +22,10 @@ interface NavBarProps {
 }
 
 export const NavBar = ({ loading, loadStory }: NavBarProps) => {
-  const [activeStoryType, setActiveStoryType] = useState<StoryKind>("top");
+  const router = useRouter();
+  const activeStoryType =
+    [...navItems.map((i) => i.id)].find((i) => i === router.query.kind) ||
+    "top";
 
   return (
     <nav
@@ -47,7 +51,9 @@ export const NavBar = ({ loading, loadStory }: NavBarProps) => {
                 className={`transition-colors ${
                   active ? "text-orange-400" : "text-gray-400 hover:text-white"
                 }`}
-                onClick={() => setActiveStoryType(item.id)}
+                onClick={() =>
+                  router.push(`/?kind=${item.id}`, undefined, { shallow: true })
+                }
               >
                 <span className={`${active ? "" : "opacity-0 select-none"}`}>
                   [

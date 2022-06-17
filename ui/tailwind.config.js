@@ -11,6 +11,9 @@ module.exports = {
       colors: {
         owhite: 'rgba(255, 251, 247, 1.00)',
         gray: colors.zinc,
+      },
+      fontSize: {
+        'xxs': ['0.7rem', { lineHeight: '0.7rem' }],
       }
     }
   },

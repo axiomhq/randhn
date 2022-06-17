@@ -34,7 +34,7 @@ class Home extends React.Component<NextPage, HomeState> {
     return (
       <div className="bg-white">
         <Head>
-          <title>[RANDUI]</title>
+          <title>[RANDHN]</title>
           <meta name="description" content="Hacker News Roulette" />
           <link rel="icon" href="/favicon.ico" />
         </Head>
