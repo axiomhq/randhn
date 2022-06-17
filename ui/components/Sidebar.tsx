@@ -24,7 +24,7 @@ export const Sidebar = ({ className, stats, story, user }: SidebarProps) => {
   }
   return (
     <aside
-      className={`${className} z-10 w-72 font-mono text-xs space-y-4 overflow-y-auto `}
+      className={`${className} fixed top-0 right-0 z-10 w-72 font-mono text-xs space-y-4 overflow-y-auto `}
       style={{
         height: "calc(100vh - 32px)",
         marginTop: 32,

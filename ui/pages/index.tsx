@@ -112,8 +112,11 @@ class Home extends React.Component<NextPage, HomeState> {
               ></path>
             </svg>
           </div>
-
-          <Frame className="flex-1" url={currentStory?.url} />
+          <Frame
+            className="flex-1"
+            url={currentStory?.url}
+            story={currentStory}
+          />
           <Sidebar
             className="flex-0 bg-orange-50"
             story={currentStory}
