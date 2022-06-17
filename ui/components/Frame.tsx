@@ -1,6 +1,7 @@
 import React from 'react';
 
 import { Story } from '../store/types';
+import { CopyIcon, GlobeIcon, LinkIcon } from './Icons';
 
 interface FrameProps {
   story?: Story;
@@ -27,31 +28,7 @@ export const Frame = ({ className, url, story }: FrameProps) => {
         <Item className="flex-1">
           <div className="flex-1 flex items-center space-x-2">
             <span className="uppercase opacity-80">
-              <svg width="1rem" height="1rem" fill="none" viewBox="0 0 24 24">
-                <circle
-                  cx="12"
-                  cy="12"
-                  r="7.25"
-                  stroke="currentColor"
-                  strokeLinecap="round"
-                  strokeLinejoin="round"
-                  strokeWidth="1.5"
-                ></circle>
-                <path
-                  stroke="currentColor"
-                  strokeLinecap="round"
-                  strokeLinejoin="round"
-                  strokeWidth="1.5"
-                  d="M15.25 12C15.25 16.5 13.2426 19.25 12 19.25C10.7574 19.25 8.75 16.5 8.75 12C8.75 7.5 10.7574 4.75 12 4.75C13.2426 4.75 15.25 7.5 15.25 12Z"
-                ></path>
-                <path
-                  stroke="currentColor"
-                  strokeLinecap="round"
-                  strokeLinejoin="round"
-                  strokeWidth="1.5"
-                  d="M5 12H12H19"
-                ></path>
-              </svg>
+              <GlobeIcon />
             </span>
             <span className="inline-block text-owhite break-all overflow-hidden max-h-4 w-full pr-4">
               {story?.url || ""}
@@ -59,30 +36,11 @@ export const Frame = ({ className, url, story }: FrameProps) => {
           </div>
           <div className="flex items-center space-x-3">
             <a
-              className="text-owhite hover:text-orange-400"
+              className="text-owhite hover:text-orange-400 cursor-pointer"
               onClick={() => copyText(story?.url ?? "")}
               title="Copy link"
             >
-              <svg width="1rem" height="1rem" fill="none" viewBox="0 0 24 24">
-                <path
-                  stroke="currentColor"
-                  strokeLinecap="round"
-                  strokeLinejoin="round"
-                  strokeWidth="1.5"
-                  d="M6.5 15.25V15.25C5.5335 15.25 4.75 14.4665 4.75 13.5V6.75C4.75 5.64543 5.64543 4.75 6.75 4.75H13.5C14.4665 4.75 15.25 5.5335 15.25 6.5V6.5"
-                ></path>
-                <rect
-                  width="10.5"
-                  height="10.5"
-                  x="8.75"
-                  y="8.75"
-                  stroke="currentColor"
-                  strokeLinecap="round"
-                  strokeLinejoin="round"
-                  strokeWidth="1.5"
-                  rx="2"
-                ></rect>
-              </svg>
+              <CopyIcon />
             </a>
             <div className="opacity-50">|</div>
             <a
@@ -92,29 +50,7 @@ export const Frame = ({ className, url, story }: FrameProps) => {
               rel="noopener noreferrer"
               title="Open in new tab"
             >
-              <svg width="1rem" height="1rem" fill="none" viewBox="0 0 24 24">
-                <path
-                  stroke="currentColor"
-                  strokeLinecap="round"
-                  strokeLinejoin="round"
-                  strokeWidth="1.5"
-                  d="M9.25 4.75H6.75C5.64543 4.75 4.75 5.64543 4.75 6.75V17.25C4.75 18.3546 5.64543 19.25 6.75 19.25H17.25C18.3546 19.25 19.25 18.3546 19.25 17.25V14.75"
-                ></path>
-                <path
-                  stroke="currentColor"
-                  strokeLinecap="round"
-                  strokeLinejoin="round"
-                  strokeWidth="1.5"
-                  d="M19.25 9.25V4.75H14.75"
-                ></path>
-                <path
-                  stroke="currentColor"
-                  strokeLinecap="round"
-                  strokeLinejoin="round"
-                  strokeWidth="1.5"
-                  d="M19 5L11.75 12.25"
-                ></path>
-              </svg>
+              <LinkIcon />
             </a>
           </div>
         </Item>
