@@ -97,7 +97,11 @@ async function notifyAxiom(
     });
 }
 
-async function getRandomHNStory(topic: string | null): Promise<Selection> {
+async function getRandomHNStories(
+  topic: string | null,
+  limit: number,
+  frame: boolean,
+): Promise<Selection[]> {
   const fetches = [];
   switch (topic) {
     case null || "random":
@@ -149,27 +153,67 @@ async function getRandomHNStory(topic: string | null): Promise<Selection> {
   );
 
   // union the two arrays
-  const stories = [...topStories, ...newStories, ...showStories, ...askStories];
+  const storyIDs = [
+    ...topStories,
+    ...newStories,
+    ...showStories,
+    ...askStories,
+  ];
   // dedup the array
-  const dedupedStories = stories.filter(
-    (item, index) => stories.indexOf(item) === index,
+  const dedupedStories = storyIDs.filter(
+    (item, index) => storyIDs.indexOf(item) === index,
   );
 
-  // pick random story
-  const randID =
-    dedupedStories[Math.floor(Math.random() * dedupedStories.length)];
-  // fetch the story
-  const storyReq = await fetch(HNItemURL.replace("{id}", randID.toString()));
-  const story = await storyReq.json();
-  // return the story
-  return {
-    minStoryID: dedupedStories[0],
-    maxStoryID: dedupedStories[dedupedStories.length - 1],
-    distinctStoriesLength: dedupedStories.length,
-    story,
-  };
+  return await selectRandomHNStories(dedupedStories, limit, frame);
 }
 
+async function selectRandomHNStories(
+  ids: number[],
+  limit: number,
+  frame: boolean,
+): Promise<Selection[]> {
+  // get min/max id
+  const minStoryID = Math.min(...ids);
+  const maxStoryID = Math.max(...ids);
+
+  const randIDs = new Array(limit).fill(0).map(() => {
+    const index = Math.floor(Math.random() * ids.length);
+    return ids[index];
+  });
+
+  // parallel fetch the stories and check frame
+  const stories = await Promise.all(
+    randIDs.map(async (id) => {
+      const story = await fetch(HNItemURL.replace("{id}", id.toString()));
+      const item = await story.json();
+      if (frame) {
+        // checkFrame(item);
+        if (await checkFrame(item)) {
+          return item;
+        }
+        return null;
+      }
+      return item;
+    }),
+  );
+
+  const selections: Selection[] = stories.filter((item) => item !== null).map(
+    (story) => {
+      return {
+        minStoryID,
+        maxStoryID,
+        distinctStoriesLength: ids.length,
+        story,
+      };
+    },
+  );
+
+  if (selections.length === 0) {
+    return selectRandomHNStories(ids, limit, frame);
+  }
+
+  return selections;
+}
 type DomainSiblings = AxiomEvent[];
 
 async function getDomainStories(story: HNItem): Promise<DomainSiblings> {
@@ -197,9 +241,10 @@ async function getDomainStories(story: HNItem): Promise<DomainSiblings> {
   const deduper = new Set<string>();
   for (const event of res.matches) {
     const ev = event as AxiomEvent;
-    if (!deduper.has(ev.data.url ?? "")) {
+    const urlStr = ev.data.url ?? "";
+    if (deduper.has(urlStr) == false) {
       siblings.push(event as AxiomEvent);
-      deduper.add(ev.data.url ?? "");
+      deduper.add(urlStr);
     }
   }
 
@@ -218,9 +263,11 @@ async function getUserStats(story: HNItem): Promise<UserActivity> {
   ['hackernews']
   | where _time >= now(-90d)
   | where ['by'] == "${story.by}" and ['id'] != ${story.id}
+  // FIXME: remove later
+  | where type == "story" and title !startswith_cs "Show HN:"
   | extend xType = case (type == "story" and title startswith_cs "Show HN:", "show", type == "story" and title startswith_cs "Ask HN:", "ask", type)
-  | project title, xType, ref, url
-  | take 10000
+  | project title, xType, url
+  | take 100
   `;
 
   const res = await axiom.query({
@@ -249,29 +296,36 @@ async function getUserStats(story: HNItem): Promise<UserActivity> {
 }
 
 async function checkFrame(story: HNItem): Promise<boolean> {
-  const headRes = await fetch(story.url, { method: "HEAD" });
-  if (headRes.status !== 200) {
+  try {
+    if (story.url === undefined) {
+      return false;
+    }
+    const headRes = await fetch(story.url, { method: "HEAD" });
+    if (headRes.status !== 200) {
+      return false;
+    }
+
+    let crap = false;
+
+    headRes.headers.forEach((value, key) => {
+      key = key.toLowerCase();
+      value = value.toLowerCase();
+
+      if (key === "x-frame-options") {
+        if (value.indexOf("sameorigin") >= 0 || value.indexOf("deny") >= 0) {
+          crap = true;
+        }
+      } else if (key === "content-security-policy") {
+        if (value.indexOf("frame-ancestors") >= 0) {
+          crap = true;
+        }
+      }
+    });
+
+    return !crap;
+  } catch (e) {
     return false;
   }
-
-  let crap = false;
-
-  headRes.headers.forEach((value, key) => {
-    key = key.toLowerCase();
-    value = value.toLowerCase();
-
-    if (key === "x-frame-options") {
-      if (value.indexOf("sameorigin") >= 0 || value.indexOf("deny") >= 0) {
-        crap = true;
-      }
-    } else if (key === "content-security-policy") {
-      if (value.indexOf("frame-ancestors") >= 0) {
-        crap = true;
-      }
-    }
-  });
-
-  return !crap;
 }
 
 async function handler(req: Request): Promise<Response> {
@@ -281,64 +335,38 @@ async function handler(req: Request): Promise<Response> {
   const hasStats = url.searchParams.get("stats") ?? "true";
   const canFrame = url.searchParams.get("canFrame") ?? "false";
   const now = Date.now();
-  let selection: Selection = {
-    minStoryID: 0,
-    maxStoryID: 0,
-    distinctStoriesLength: 0,
-    story: {
-      id: 0,
-      title: "",
-      url: "",
-      by: "",
-      time: 0,
-      kids: [],
-      score: 0,
-      type: "",
-      descendants: 0,
-    },
-  };
-
-  // if selection.story is undefined, try again up to 5 times
-  for (let i = 0; i < 5; i++) {
-    selection = await getRandomHNStory(kind);
-    // check if story is valid
-    console.log("got story:", selection.story.url);
-    if (!selection.story.url) {
-      console.log("got empty story, trying again:", selection.story.url);
-      continue;
-    }
-
-    // check if can be framed
-    if (canFrame === "true") {
-      console.log("checking if can be framed:", selection.story.url);
-      const valid = await checkFrame(selection.story);
-      if (!valid) {
-        console.log("invalid frame:", selection.story.url);
-        continue;
-      }
-      console.log("valid frame:", selection.story.url);
-      break;
-    }
+  // get stories
+  const frame = canFrame === "true";
+  let limit = 1;
+  if (frame === true) {
+    limit = 3;
   }
+  const stories = await getRandomHNStories(kind, limit, frame);
+  const selection = stories[Math.floor(Math.random() * stories.length)];
+
+  const notifyReq = notifyAxiom(now, req, selection);
+
+  console.log("time to get stories:", Date.now() - now);
 
   let stats = {};
-  if (hasStats == "true") {
-    const userStatsReq = getUserStats(selection.story);
-    const domainSiblingsReq = getDomainStories(selection.story);
 
-    const [userStats, domainSiblings] = await Promise.all([
+  if (hasStats == "true" && selection) {
+    const userStatsReq = getUserStats(selection.story);
+    //const domainSiblingsReq = getDomainStories(selection.story);
+
+    const [userStats] = await Promise.all([
       userStatsReq,
-      domainSiblingsReq,
+      //domainSiblingsReq,
     ]);
 
     stats = {
       userStats: userStats,
-      domainSiblings: domainSiblings,
+      //domainSiblings: domainSiblings,
     };
   }
 
   // dedup domainSiblings based on url
-  await notifyAxiom(now, req, selection);
+  await notifyReq;
 
   switch (path) {
     case "/":
