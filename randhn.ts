@@ -238,8 +238,9 @@ async function getDomainStories(story: HNItem): Promise<DomainSiblings> {
   ['hackernews']
   | where _time >= now(-90d)
   | where type == "story" and url startswith "https://${domain}" and id != ${story.id}
-  | project title, url
-  | take 100
+  | project title, url, _time
+  | order by _time desc
+  | take 30
   `;
 
   const res = await axiom.query({
@@ -257,6 +258,10 @@ async function getDomainStories(story: HNItem): Promise<DomainSiblings> {
     }
   }
 
+  // if siblings > 5 then return 5
+  if (siblings.length > 5) {
+    return siblings.slice(0, 5);
+  }
   return siblings;
 }
 
