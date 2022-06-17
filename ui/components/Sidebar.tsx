@@ -167,8 +167,8 @@ export const Sidebar = ({ className, stats, story, user }: SidebarProps) => {
           refs={stats?.domainSiblings}
         />
       </div>
-      <footer className="fixed right-0 bottom-0 w-72 z-10 bg-owhite border-t-2 border-orange-800 border-opacity-20 p-3">
-        Hello
+      <footer className="fixed right-0 bottom-0 w-72 h-12 z-10 bg-owhite border-t-2 border-orange-800 border-opacity-20 p-3">
+        {""}
       </footer>
     </aside>
   );
