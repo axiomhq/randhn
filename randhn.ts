@@ -84,8 +84,8 @@ async function notifyAxiom(
       url: req.url,
       params: {
         kind: kind,
-        stats: hasStats,
-        canFrame: canFrame,
+        stats: hasStats === "true",
+        canFrame: canFrame === "true",
       },
       headers: {
         contentType: req.headers.get("content-type") ?? undefined,
