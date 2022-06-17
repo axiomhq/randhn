@@ -34,7 +34,7 @@ class Home extends React.Component<NextPage, HomeState> {
     return (
       <div className="bg-white">
         <Head>
-          <title>[RANDUI]</title>
+          <title>[RANDHN]</title>
           <meta name="description" content="Hacker News Roulette" />
           <link rel="icon" href="/favicon.ico" />
         </Head>
@@ -112,8 +112,11 @@ class Home extends React.Component<NextPage, HomeState> {
               ></path>
             </svg>
           </div>
-
-          <Frame className="flex-1" url={currentStory?.url} />
+          <Frame
+            className="flex-1"
+            url={currentStory?.url}
+            story={currentStory}
+          />
           <Sidebar
             className="flex-0 bg-orange-50"
             story={currentStory}
