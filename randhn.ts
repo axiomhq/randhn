@@ -70,13 +70,23 @@ async function notifyAxiom(
   req: Request,
   sel: Selection,
 ): Promise<void> {
-  const path = new URL(req.url).pathname;
+  const url = new URL(req.url);
+  const path = url.pathname;
+  const kind = url.searchParams.get("kind") ?? "random";
+  const hasStats = url.searchParams.get("stats") ?? "true";
+  const canFrame = url.searchParams.get("canFrame") ?? "false";
+
   const handlerAttr = {
     _time: new Date(now).toISOString(),
     req: {
       method: req.method,
       referrer: req.referrer,
       url: req.url,
+      params: {
+        kind: kind,
+        stats: hasStats,
+        canFrame: canFrame,
+      },
       headers: {
         contentType: req.headers.get("content-type") ?? undefined,
         userAgent: req.headers.get("user-agent") ?? "Unknown",
