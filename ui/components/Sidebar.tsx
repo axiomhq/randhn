@@ -40,7 +40,7 @@ export const Sidebar = ({ className, stats, story, user }: SidebarProps) => {
               className={`text-orange-900 text-sm hover:text-orange-500 hover:underline flex items-center`}
               href={`https://news.ycombinator.com/user?id=${story?.by}`}
               target="_blank"
-              rel="noopener"
+              rel="noopener noreferrer"
             >
               <span>{story?.by} </span>
               <span className="mt-1 ml-1 opacity-75">
@@ -190,6 +190,6 @@ function urlify(text: string) {
   return text.replace(urlRegex, function (url) {
     url = url.startsWith("www") ? `http://${url}` : url;
 
-    return `<a class="underline" href="${url}" target="_blank" rel="noopener">${url}</a>`;
+    return `<a class="underline" href="${url}" target="_blank" rel="noopener noreferrer">${url}</a>`;
   });
 }
