@@ -1,57 +1,59 @@
 // Next.js API route support: https://nextjs.org/docs/api-routes/introduction
 import type { NextApiRequest, NextApiResponse } from "next";
-import { Story } from '../../store/types';
+import { APIResult, ExtendedAPIResult, Story, User } from '../../store/types';
 
 export default async function handler(
   req: NextApiRequest,
-  res: NextApiResponse<Story>
+  res: NextApiResponse<ExtendedAPIResult>
 ) {
-  let story: Story | undefined;
+  const kind = (req.query.kind as string) ?? "random";
 
-  while (!story) {
-    story = await getStory("random");
+  let result: ExtendedAPIResult | undefined;
+
+  for (let i = 0; i < 10; i++) {
+    result = await getStory(kind);
+    if (result) break;
   }
 
-  if (story) {
-    res.status(200).json(story);
+  if (result) {
+    result.user = await getUser(result.story.by);
+
+    res.status(200).json(result);
   } else {
     res.status(500);
   }
 }
 
-async function getStory(kind: string): Promise<Story | undefined> {
-  const result = await fetch(`https://randhn.deno.dev/json?kind=${kind}`, {
-    method: "GET",
-    headers: {
-      "Accept-Encoding": "application/json",
-    },
-  });
-  const story: Story = await result.json();
+async function getStory(kind: string): Promise<ExtendedAPIResult | undefined> {
+  try {
+    const res = await fetch(
+      `https://randhn.deno.dev/json?kind=${kind}&canFrame=true`,
+      {
+        method: "GET",
+        headers: {
+          "Accept-Encoding": "application/json",
+        },
+      }
+    );
+    return await res.json();
+  } catch (e) {
+    console.error(e);
+  }
+}
 
-  const res = await fetch(story.url, { method: "HEAD" });
-  if (res.status !== 200) {
+async function getUser(id: string): Promise<User | undefined> {
+  try {
+    const res = await fetch(
+      `https://hacker-news.firebaseio.com/v0/user/${id}.json`,
+      {
+        method: "GET",
+        headers: {
+          "Accept-Encoding": "application/json",
+        },
+      }
+    );
+    return (await res.json()) as User;
+  } catch (e) {
     return undefined;
   }
-
-  let crap = false;
-
-  console.log("\n\n", story.url);
-  res.headers.forEach((value, key) => {
-    key = key.toLowerCase();
-    value = value.toLowerCase();
-
-    console.log(key, value);
-
-    if (key === "x-frame-options") {
-      if (value.indexOf("sameorigin") >= 0 || value.indexOf("deny") >= 0) {
-        crap = true;
-      }
-    } else if (key === "content-security-policy") {
-      if (value.indexOf("frame-ancestors") >= 0) {
-        crap = true;
-      }
-    }
-  });
-
-  return crap ? undefined : story;
 }

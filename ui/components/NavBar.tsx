@@ -10,8 +10,8 @@ interface NavItem {
 const navItems: NavItem[] = [
   { id: "random", label: "Random" },
   { id: "top", label: "Top" },
+  { id: "new", label: "New" },
   { id: "best", label: "Best" },
-  { id: "ask", label: "AskHN" },
   { id: "show", label: "ShowHN" },
 ];
 
@@ -24,8 +24,8 @@ export const NavBar = ({ loading, loadStory }: NavBarProps) => {
   const [activeStoryType, setActiveStoryType] = useState<StoryKind>("top");
 
   return (
-    <div
-      className="fixed top-0 left-0 right-0 bg-gray-800 border-b-2 border-orange-500 flex flex-row items-center font-mono text-white text-xs pt-0.5 px-4"
+    <nav
+      className="fixed top-0 left-0 right-0 bg-gray-800 border-b-2 border-orange-500 flex flex-row items-center font-mono text-white text-xs pt-0.5 px-4 z-50"
       style={{ height: 32 }}
     >
       <div className="grow flex items-center justify-start space-x-2">
@@ -71,7 +71,7 @@ export const NavBar = ({ loading, loadStory }: NavBarProps) => {
         >
           <span className={`text-orange-600`}>&lt;</span>
           <span className={`text-orange-400`}>&lt;</span>
-          <span className="transition-[padding] text-gray-200 hover:px-1 hover:text-white active:px-0 active:text-gray-200">
+          <span className="transition-[padding] text-gray-100 hover:px-1 hover:text-bwhite active:px-0 active:text-gray-200">
             {" "}
             Spin the Wheel{" "}
           </span>
@@ -84,6 +84,6 @@ export const NavBar = ({ loading, loadStory }: NavBarProps) => {
           <div className="text-red-500 text-lg">♥</div>
         </div>
       </div>
-    </div>
+    </nav>
   );
 };

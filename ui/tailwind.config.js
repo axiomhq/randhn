@@ -9,7 +9,8 @@ module.exports = {
   theme: {
     extend: { 
       colors: {
-        gray: colors.zinc
+        owhite: 'rgba(255, 251, 247, 1.00)',
+        gray: colors.zinc,
       }
     }
   },
