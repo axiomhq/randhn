@@ -24,8 +24,8 @@ export const NavBar = ({ loading, loadStory }: NavBarProps) => {
   const [activeStoryType, setActiveStoryType] = useState<StoryKind>("top");
 
   return (
-    <div
-      className="fixed top-0 left-0 right-0 bg-gray-800 border-b-2 border-orange-500 flex flex-row items-center font-mono text-white text-xs pt-0.5 px-4"
+    <nav
+      className="fixed top-0 left-0 right-0 bg-gray-800 border-b-2 border-orange-500 flex flex-row items-center font-mono text-white text-xs pt-0.5 px-4 z-50"
       style={{ height: 32 }}
     >
       <div className="grow flex items-center justify-start space-x-2">
@@ -84,6 +84,6 @@ export const NavBar = ({ loading, loadStory }: NavBarProps) => {
           <div className="text-red-500 text-lg">♥</div>
         </div>
       </div>
-    </div>
+    </nav>
   );
 };

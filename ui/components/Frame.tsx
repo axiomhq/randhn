@@ -7,17 +7,18 @@ interface FrameProps {
 
 export const Frame = ({ className, url }: FrameProps) => {
   return (
-    <iframe
-      className={className}
+    <article
+      className="flex-1 border-r-2 border-orange-800 border-opacity-20"
       style={{
-        width: "100%",
         height: "calc(100vh - 32px)",
         marginTop: 32,
-        border: "none",
-        padding: 0,
       }}
-      src={url}
-      title="description"
-    ></iframe>
+    >
+      <iframe
+        className={`${className} w-full h-full border-none p-0 m-0 `}
+        src={url}
+        title="description"
+      ></iframe>
+    </article>
   );
 };

@@ -5,11 +5,12 @@ import React, { useState } from 'react';
 import { Frame } from '../components/Frame';
 import { NavBar } from '../components/NavBar';
 import { Sidebar } from '../components/Sidebar';
-import { APIResult, Stats, Story, StoryKind } from '../store/types';
+import { APIResult, ExtendedAPIResult, Stats, Story, StoryKind, User } from '../store/types';
 
 interface HomeState {
   currentStory?: Story;
   currentStats?: Stats;
+  currentUser?: User;
   lastError?: string;
   loading: boolean;
 }
@@ -28,7 +29,8 @@ class Home extends React.Component<NextPage, HomeState> {
   };
 
   render() {
-    const { currentStory, lastError, currentStats, loading } = this.state;
+    const { currentStory, currentStats, currentUser, loading, lastError } =
+      this.state;
     return (
       <div className="bg-white">
         <Head>
@@ -38,12 +40,86 @@ class Home extends React.Component<NextPage, HomeState> {
         </Head>
 
         <NavBar loadStory={this.loadStory} loading={loading} />
-        <main className="flex">
+        <main className={`flex`}>
+          <div
+            className={`fixed w-full h-full z-40 flex items-center justify-around pointer-events-none transition-all ease-out duration-500 bg-owhite bg-opacity-20  ${
+              loading ? "opacity-75" : "opacity-0"
+            }`}
+          >
+            <svg
+              className={`${loading ? "animate-spin" : ""} text-orange-800`}
+              width="128"
+              height="128"
+              viewBox="0 0 24 24"
+              fill="none"
+              xmlns="http://www.w3.org/2000/svg"
+            >
+              <path
+                d="M12 4.75V6.25"
+                stroke="currentColor"
+                strokeWidth="1.5"
+                strokeLinecap="round"
+                strokeLinejoin="round"
+              ></path>
+              <path
+                d="M17.1266 6.87347L16.0659 7.93413"
+                stroke="currentColor"
+                strokeWidth="1.5"
+                strokeLinecap="round"
+                strokeLinejoin="round"
+              ></path>
+              <path
+                d="M19.25 12L17.75 12"
+                stroke="currentColor"
+                strokeWidth="1.5"
+                strokeLinecap="round"
+                strokeLinejoin="round"
+              ></path>
+              <path
+                d="M17.1266 17.1265L16.0659 16.0659"
+                stroke="currentColor"
+                strokeWidth="1.5"
+                strokeLinecap="round"
+                strokeLinejoin="round"
+              ></path>
+              <path
+                d="M12 17.75V19.25"
+                stroke="currentColor"
+                strokeWidth="1.5"
+                strokeLinecap="round"
+                strokeLinejoin="round"
+              ></path>
+              <path
+                d="M7.9342 16.0659L6.87354 17.1265"
+                stroke="currentColor"
+                strokeWidth="1.5"
+                strokeLinecap="round"
+                strokeLinejoin="round"
+              ></path>
+              <path
+                d="M6.25 12L4.75 12"
+                stroke="currentColor"
+                strokeWidth="1.5"
+                strokeLinecap="round"
+                strokeLinejoin="round"
+              ></path>
+              <path
+                d="M7.9342 7.93413L6.87354 6.87347"
+                stroke="currentColor"
+                strokeWidth="1.5"
+                strokeLinecap="round"
+                strokeLinejoin="round"
+              ></path>
+            </svg>
+          </div>
+
           <Frame className="flex-1" url={currentStory?.url} />
           <Sidebar
             className="flex-0 bg-orange-50"
             story={currentStory}
             stats={currentStats}
+            user={currentUser}
+            loading={loading}
           />
         </main>
       </div>
@@ -54,8 +130,6 @@ class Home extends React.Component<NextPage, HomeState> {
     this.setState({
       lastError: undefined,
       loading: true,
-      currentStory: undefined,
-      currentStats: undefined,
     });
 
     try {
@@ -66,14 +140,21 @@ class Home extends React.Component<NextPage, HomeState> {
         },
       });
 
-      const apires: APIResult = await res.json();
+      const apires: ExtendedAPIResult = await res.json();
       this.setState({
         currentStory: apires.story,
         currentStats: apires.stats,
+        currentUser: apires.user,
         loading: false,
       });
     } catch (e) {
-      this.setState({ lastError: (e as Error).toString(), loading: false });
+      this.setState({
+        lastError: (e as Error).toString(),
+        loading: false,
+        currentStory: undefined,
+        currentStats: undefined,
+        currentUser: undefined,
+      });
     }
   };
 }

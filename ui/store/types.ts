@@ -37,3 +37,14 @@ export type APIResult = {
   story: Story;
   stats: Stats;
 };
+
+export type ExtendedAPIResult = APIResult & {
+  user?: User;
+};
+
+export type User = {
+  id: string;
+  about: string;
+  created: number;
+  karma: number;
+};
