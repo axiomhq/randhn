@@ -1,4 +1,4 @@
-export type StoryKind = "random" | "top" | "best" | "ask" | "show";
+export type StoryKind = "random" | "top" | "new" | "best" | "show";
 
 export type LoadStoryFunc = (kind: StoryKind) => void;
 

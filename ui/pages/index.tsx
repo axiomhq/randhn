@@ -127,6 +127,10 @@ class Home extends React.Component<NextPage, HomeState> {
   }
 
   loadStory = async (storyType: StoryKind) => {
+    if (this.state.loading) {
+      return;
+    }
+
     this.setState({
       lastError: undefined,
       loading: true,

@@ -10,8 +10,8 @@ interface NavItem {
 const navItems: NavItem[] = [
   { id: "random", label: "Random" },
   { id: "top", label: "Top" },
+  { id: "new", label: "New" },
   { id: "best", label: "Best" },
-  { id: "ask", label: "AskHN" },
   { id: "show", label: "ShowHN" },
 ];
 
@@ -71,7 +71,7 @@ export const NavBar = ({ loading, loadStory }: NavBarProps) => {
         >
           <span className={`text-orange-600`}>&lt;</span>
           <span className={`text-orange-400`}>&lt;</span>
-          <span className="transition-[padding] text-gray-200 hover:px-1 hover:text-white active:px-0 active:text-gray-200">
+          <span className="transition-[padding] text-gray-100 hover:px-1 hover:text-bwhite active:px-0 active:text-gray-200">
             {" "}
             Spin the Wheel{" "}
           </span>

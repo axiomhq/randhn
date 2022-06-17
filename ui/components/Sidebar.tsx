@@ -37,13 +37,13 @@ export const Sidebar = ({ className, stats, story, user }: SidebarProps) => {
           </label>
           <span className="flex items-center justify-between">
             <a
-              className={`text-black text-sm hover:text-orange-500 hover:underline flex items-center`}
+              className={`text-orange-900 text-sm hover:text-orange-500 hover:underline flex items-center`}
               href={`https://news.ycombinator.com/user?id=${story?.by}`}
               target="_blank"
               rel="noopener"
             >
               <span>{story?.by} </span>
-              <span className="mt-1 ml-1 opacity-50">
+              <span className="mt-1 ml-1 opacity-75">
                 <svg width="1em" height="1em" fill="none" viewBox="0 0 24 24">
                   <path
                     stroke="currentColor"
