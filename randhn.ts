@@ -11,6 +11,8 @@ const showHNStoriesURL =
   "https://hacker-news.firebaseio.com/v0/showstories.json?print=pretty";
 const askHNStoriesURL =
   "https://hacker-news.firebaseio.com/v0/askstories.json?print=pretty";
+const bestHNStoriesURL =
+  "https://hacker-news.firebaseio.com/v0/beststories.json?print=pretty";
 const HNItemURL =
   "https://hacker-news.firebaseio.com/v0/item/{id}.json?print=pretty";
 
@@ -120,11 +122,13 @@ async function getRandomHNStories(
         fetchFromHN(newHNStoriesURL),
         fetchFromHN(showHNStoriesURL),
         fetchFromHN(askHNStoriesURL),
+        fetchFromHN(bestHNStoriesURL),
       );
       break;
     case "top":
       fetches.push(
         fetchFromHN(topHNStoriesURL),
+        fetchEmpty(),
         fetchEmpty(),
         fetchEmpty(),
         fetchEmpty(),
@@ -136,6 +140,7 @@ async function getRandomHNStories(
         fetchEmpty(),
         fetchEmpty(),
         fetchEmpty(),
+        fetchEmpty(),
       );
       break;
     case "show":
@@ -144,11 +149,22 @@ async function getRandomHNStories(
         fetchEmpty(),
         fetchEmpty(),
         fetchEmpty(),
+        fetchEmpty(),
       );
       break;
     case "ask":
       fetches.push(
         fetchFromHN(askHNStoriesURL),
+        fetchEmpty(),
+        fetchEmpty(),
+        fetchEmpty(),
+        fetchEmpty(),
+      );
+      break;
+    case "best":
+      fetches.push(
+        fetchFromHN(bestHNStoriesURL),
+        fetchEmpty(),
         fetchEmpty(),
         fetchEmpty(),
         fetchEmpty(),
