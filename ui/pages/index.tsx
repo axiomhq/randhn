@@ -38,6 +38,7 @@ class Home extends React.Component<NextPage, HomeState> {
         <Head>
           <title>[RANDHN]</title>
           <meta name="description" content="Hacker News Roulette" />
+          <meta name="viewport" content="initial-scale=1.0" />
           <link rel="icon" href="/favicon.ico" />
         </Head>
 

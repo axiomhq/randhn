@@ -1,7 +1,7 @@
 import React from 'react';
 
 import { Story } from '../store/types';
-import { CopyIcon, GlobeIcon, LinkIcon } from './Icons';
+import { CopyIcon, GlobeIcon, LinkIcon, TweetIcon } from './Icons';
 
 interface FrameProps {
   story?: Story;
@@ -39,6 +39,7 @@ export const Frame = ({ className, url, story }: FrameProps) => {
               className="text-owhite hover:text-orange-400 cursor-pointer"
               onClick={() => copyText(story?.url ?? "")}
               title="Copy link"
+              aria-label="Copy link to clipboard"
             >
               <CopyIcon />
             </a>
@@ -49,8 +50,19 @@ export const Frame = ({ className, url, story }: FrameProps) => {
               target="_blank"
               rel="noopener noreferrer"
               title="Open in new tab"
+              aria-label="Open story in new tab"
             >
               <LinkIcon />
+            </a>
+            <div className="opacity-50">|</div>
+            <a
+              className="text-owhite hover:text-orange-400"
+              href={`https://twitter.com/share?text=${story?.title}&url=${story?.url}`}
+              target="_blank"
+              rel="noopener noreferrer"
+              title="Share this page"
+            >
+              <TweetIcon />
             </a>
           </div>
         </Item>
@@ -62,6 +74,7 @@ export const Frame = ({ className, url, story }: FrameProps) => {
             target="_blank"
             rel="noopener noreferrer"
             title="View in HN"
+            aria-label="View Hacker News thread"
           >
             <span className="uppercase opacity-80">Score</span>
             <span className="font-bold">{story?.score}</span>
@@ -73,6 +86,7 @@ export const Frame = ({ className, url, story }: FrameProps) => {
             target="_blank"
             rel="noopener noreferrer"
             title="View Comments"
+            aria-label="View story comments"
           >
             <span className="uppercase opacity-80">Comments</span>
             <span className="font-bold">{story?.descendants}</span>
@@ -83,7 +97,7 @@ export const Frame = ({ className, url, story }: FrameProps) => {
       <iframe
         className={`${className} w-full h-full border-none p-0 m-0 `}
         src={url}
-        title="description"
+        title={story?.title}
       ></iframe>
     </article>
   );
