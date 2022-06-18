@@ -132,7 +132,18 @@ export const Sidebar = ({ className, stats, story, user }: SidebarProps) => {
           refs={stats?.domainSiblings}
         />
       </div>
-      <footer className="fixed right-0 bottom-0 w-72 h-12 z-10 bg-owhite border-t-2 border-orange-800 border-opacity-20 p-3 flex items-center justify-between">
+      <footer className="fixed right-0 bottom-0 w-72 h-12 z-10 bg-owhite border-t-2 border-orange-800 border-opacity-20 p-3 flex items-center justify-end">
+        <a
+          className="flex items-center hover:underline text-orange-800"
+          href="https://github.com/axiomhq/randhn"
+          title="GitHub Repo"
+          aria-label="RandHN Github repository"
+        >
+          <GitHubIcon />
+        </a>
+        <div className="font-bold text-orange-900 opacity-50">
+          &nbsp;/&nbsp;
+        </div>
         <a
           className="flex items-center hover:underline text-orange-800 "
           href="https://twitter.com/AxiomFM"
@@ -140,14 +151,6 @@ export const Sidebar = ({ className, stats, story, user }: SidebarProps) => {
           aria-label="Axiom Twitter account"
         >
           Built by <AxiomIcon className="ml-2" />
-        </a>
-        <a
-          className="flex items-center hover:underline text-orange-800 opacity-70"
-          href="https://github.com/axiomhq/randhn"
-          title="GitHub Repo"
-          aria-label="RandHN Github repository"
-        >
-          <GitHubIcon />
         </a>
       </footer>
     </aside>
