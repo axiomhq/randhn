@@ -2,7 +2,7 @@ import React, { ReactElement } from 'react';
 
 import { Stats, Story, StoryRef, User } from '../store/types';
 import { timeSince, urlify } from '../util';
-import { CalendarIcon, LinkIcon, LotusIcon, TweetIcon } from './Icons';
+import { AxiomIcon, CalendarIcon, GitHubIcon, LinkIcon, LotusIcon, TweetIcon } from './Icons';
 
 interface SidebarProps {
   story?: Story;
@@ -59,8 +59,6 @@ export const Sidebar = ({ className, stats, story, user }: SidebarProps) => {
             <a
               className={`text-orange-900 text-sm hover:text-orange-500 hover:underline flex items-center`}
               href={`https://news.ycombinator.com/user?id=${story?.by}`}
-              target="_blank"
-              rel="noopener noreferrer"
               title="View user profile"
               aria-label="View user profile"
             >
@@ -91,7 +89,7 @@ export const Sidebar = ({ className, stats, story, user }: SidebarProps) => {
                 ></div>
                 <div className="flex items-center justify-between space-x-3">
                   <span
-                    className="flex items-center text-orange-900 text-opacity-90 py-1 text-xxs space-x-0.5"
+                    className="flex items-center text-orange-900 text-opacity-90 text-xxs space-x-0.5"
                     title="karma"
                   >
                     <LotusIcon />
@@ -124,8 +122,6 @@ export const Sidebar = ({ className, stats, story, user }: SidebarProps) => {
               <a
                 className="underline"
                 href={hostURL.toString()}
-                target="_blank"
-                rel="noopener noreferrer"
                 title={`Visit ${host}`}
                 aria-label={`Visit ${host}`}
               >
@@ -136,12 +132,29 @@ export const Sidebar = ({ className, stats, story, user }: SidebarProps) => {
           refs={stats?.domainSiblings}
         />
       </div>
-      <footer className="fixed right-0 bottom-0 w-72 h-12 z-10 bg-owhite border-t-2 border-orange-800 border-opacity-20 p-3">
-        {""}
+      <footer className="fixed right-0 bottom-0 w-72 h-12 z-10 bg-owhite border-t-2 border-orange-800 border-opacity-20 p-3 flex items-center justify-between">
+        <a
+          className="flex items-center hover:underline text-orange-800 "
+          href="https://twitter.com/AxiomFM"
+          title="Visit Axiom"
+          aria-label="Axiom Twitter account"
+        >
+          Built by <AxiomIcon className="ml-2" />
+        </a>
+        <a
+          className="flex items-center hover:underline text-orange-800 opacity-70"
+          href="https://github.com/axiomhq/randhn"
+          title="GitHub Repo"
+          aria-label="RandHN Github repository"
+        >
+          <GitHubIcon />
+        </a>
       </footer>
     </aside>
   );
 };
+
+//<svg width="131" height="118" viewBox="0 0 131 118" fill="none" xmlns="http://www.w3.org/2000/svg"></svg>
 
 interface SidebarSectionProps {
   title: string | ReactElement;
@@ -173,12 +186,9 @@ const SidebarSection = ({ title, refs }: SidebarSectionProps) => {
             <a
               className="block border-2 border-orange-700 border-opacity-10 hover:border-opacity-20 rounded transition-colors bg-owhite hover:bg-white p-2"
               style={{
-                /*backgroundColor: "rgba(255, 251, 247, 1.00)",*/
                 filter: "drop-shadow(0 2px 1px rgba(196, 131, 110, 0.1))",
               }}
               href={ref.data.url}
-              target="_blank"
-              rel="noopener noreferrer"
               title="View story"
               aria-label="View story in new tab"
             >

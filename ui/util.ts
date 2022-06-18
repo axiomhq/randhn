@@ -55,3 +55,7 @@ export function urlify(text: string) {
     return `<a class="underline" href="${url}" target="_blank" rel="noopener noreferrer">${url}</a>`;
   });
 }
+
+export function copyText(copyText: string) {
+  navigator.clipboard.writeText(copyText);
+}
