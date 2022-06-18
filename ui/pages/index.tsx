@@ -40,6 +40,11 @@ class Home extends React.Component<NextPage, HomeState> {
           <meta name="description" content="Hacker News Roulette" />
           <meta name="viewport" content="initial-scale=1.0" />
           <link rel="icon" href="/favicon.ico" />
+          <script
+            src="https://cdn.usefathom.com/script.js"
+            data-site="IZJULEST"
+            defer
+          ></script>
         </Head>
 
         <NavBar loadStory={this.loadStory} loading={loading} />
