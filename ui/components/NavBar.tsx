@@ -24,23 +24,19 @@ interface NavBarProps {
 export const NavBar = ({ loading, loadStory }: NavBarProps) => {
   const router = useRouter();
   const activeStoryType =
-    [...navItems.map((i) => i.id)].find((i) => i === router.query.kind) ||
-    "top";
+    [...navItems.map((i) => i.id)].find((i) => i === router.query.k) || "top";
 
   return (
     <nav
-      className="fixed top-0 left-0 right-0 bg-gray-800 border-b-2 border-orange-500 flex flex-row items-center font-mono text-white text-xs pt-0.5 px-4 z-50"
+      className="fixed top-0 left-0 right-0 bg-gray-800 border-b-2 border-orange-800 border-opacity-20 flex flex-row items-center font-mono text-white text-xs pt-0.5 px-4 z-50"
       style={{ height: 32 }}
     >
-      <div className="grow flex items-center justify-start space-x-2">
+      <div className="grow flex items-center justify-start">
         <div className="font-medium tracking-wider">
           RAND
           <span className="text-orange-500">HN</span>
         </div>
-        <div className="text-gray-400 font-bold">/</div>
-        <div>Hacker News Roulette</div>
-      </div>
-      <div className="grow flex items-center space-x-2">
+        <div className="text-gray-500 font-bold">&nbsp;&nbsp;/&nbsp;</div>
         <div className="flex items-center space-x-0">
           {navItems.map((item) => {
             const active = item.id === activeStoryType;
@@ -52,7 +48,7 @@ export const NavBar = ({ loading, loadStory }: NavBarProps) => {
                   active ? "text-orange-400" : "text-gray-400 hover:text-white"
                 }`}
                 onClick={() =>
-                  router.push(`/?kind=${item.id}`, undefined, { shallow: true })
+                  router.push(`/?k=${item.id}`, undefined, { shallow: true })
                 }
               >
                 <span className={`${active ? "" : "opacity-0 select-none"}`}>
@@ -66,7 +62,8 @@ export const NavBar = ({ loading, loadStory }: NavBarProps) => {
             );
           })}
         </div>
-        <div className="text-gray-400">/</div>
+      </div>
+      <div className="grow flex items-center space-x-2">
         <button
           className={`uppercase ${
             loading
@@ -86,8 +83,20 @@ export const NavBar = ({ loading, loadStory }: NavBarProps) => {
         </button>
       </div>
       <div className="grow text-center flex items-center justify-center space-x-2">
-        <div className="flex-1 flex items-center justify-end space-x-2">
-          <div className="text-red-500 text-lg">♥</div>
+        <div className="flex-1 flex items-center justify-end space-x-4">
+          <div>
+            <a
+              className="flex items-center text-gray-200 hover:underline opacity-80 hover:opacity-100"
+              href="https://twitter.com/share?text=Check out RandHN to browse HackerNews stories!&url=https://rand.hn"
+              target="_blank"
+              rel="noopener noreferrer"
+              title="Share on Twitter"
+              aria-label="Share on Twitter"
+            >
+              <span className="text-red-500 mr-2 text-lg">♥</span>
+              Share RandHN
+            </a>
+          </div>
         </div>
       </div>
     </nav>
