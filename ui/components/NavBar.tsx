@@ -86,7 +86,7 @@ export const NavBar = ({ loading, loadStory }: NavBarProps) => {
         <div className="flex-1 flex items-center justify-end space-x-4">
           <div>
             <a
-              className="flex items-center text-gray-200 hover:underline"
+              className="flex items-center text-gray-200 hover:underline opacity-80 hover:opacity-100"
               href="https://twitter.com/share?text=Check out RandHN to browse HackerNews stories!&url=https://rand.hn"
               target="_blank"
               rel="noopener noreferrer"
