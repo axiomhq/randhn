@@ -74,7 +74,7 @@ export const NavBar = ({ loading, loadStory }: NavBarProps) => {
           <div>
             <a
               className="flex items-center text-gray-200 hover:underline opacity-80 hover:opacity-100"
-              href="https://twitter.com/share?text=Check out RandHN to browse HackerNews stories!&url=https://rand.hn%0a%0a(powered by @axiomhq)"
+              href="https://twitter.com/share?text=Check out RandHN to browse HackerNews stories!&url=https://rand.hn%0a%0a(powered by @AxiomFM)"
               target="_blank"
               rel="noopener noreferrer"
               title="Share on Twitter"
