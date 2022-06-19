@@ -65,7 +65,7 @@ export const Toolbar = ({
             href={`https://twitter.com/share?text=${
               story?.title + "%0a%0a-"
             }&url=${story
-              ?.url}%0a%0a(Discovered using https://rand.hn - powered by @AxiomFM)`}
+              ?.url}%0a%0a(discovered via https://rand.hn powered by @AxiomFM)`}
             target="_blank"
             rel="noopener noreferrer"
             title="Share this page"
