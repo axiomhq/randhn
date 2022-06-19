@@ -1,3 +1,4 @@
+import { NextSeo } from 'next-seo';
 import Head from 'next/head';
 import { useRouter } from 'next/router';
 import React from 'react';
@@ -56,12 +57,60 @@ class Home extends React.Component<NextPage, HomeState> {
           <meta name="description" content="Hacker News Roulette" />
           <meta name="viewport" content="initial-scale=1.0" />
           <link rel="icon" href="/favicon.ico" />
+          <link
+            rel="apple-touch-icon"
+            sizes="180x180"
+            href="/apple-touch-icon.png"
+          />
+          <link
+            rel="icon"
+            type="image/png"
+            sizes="32x32"
+            href="/favicon-32x32.png"
+          />
+          <link
+            rel="icon"
+            type="image/png"
+            sizes="16x16"
+            href="/favicon-16x16.png"
+          />
+          <link rel="manifest" href="/site.webmanifest" />
+          <link rel="mask-icon" href="/safari-pinned-tab.svg" color="#27272a" />
+          <meta name="msapplication-TileColor" content="#27272a" />
+          <meta name="theme-color" content="#ffffff" />
           <script
             src="https://cdn.usefathom.com/script.js"
             data-site="IZJULEST"
             defer
           ></script>
         </Head>
+
+        <NextSeo
+          title="RandHN - Hacker News Roulette"
+          description="Play Hacker News roulette and let RandHN serve up interesting content via the Hacker News API."
+          canonical="https://rand.hn"
+          openGraph={{
+            url: "https://rand.hn",
+            title: "RandHN - Hacker News Roulette",
+            description:
+              "Play Hacker News roulette and let RandHN serve up interesting content via the Hacker News API.",
+            images: [
+              {
+                url: "https://rand.hn/og.png",
+                width: 800,
+                height: 600,
+                alt: "RandHN - Hacker News Roulette",
+                type: "image/png",
+              },
+            ],
+            site_name: "SiteName",
+          }}
+          twitter={{
+            handle: "@handle",
+            site: "@site",
+            cardType: "summary_large_image",
+          }}
+        />
 
         <NavBar loadStory={this.loadStory} loading={loading} />
         <main className={`flex`}>
