@@ -85,8 +85,8 @@ class Home extends React.Component<NextPage, HomeState> {
           <Sidebar
             className={`fixed top-0 right-0 w-full lg:w-72 flex-0 bg-orange-50 transition-transform ${
               sidebarShowing
-                ? "translate-y-0"
-                : "translate-y-full lg:translate-y-0"
+                ? "translate-x-0"
+                : "translate-x-full lg:translate-x-0"
             }`}
             story={currentStory}
             stats={currentStats}
