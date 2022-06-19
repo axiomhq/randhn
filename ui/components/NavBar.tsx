@@ -1,7 +1,7 @@
-import { useRouter } from 'next/router';
-import React, { useState } from 'react';
+import { useRouter } from "next/router";
+import React, { useState } from "react";
 
-import { LoadStoryFunc, NavItems, StoryKind } from '../store/types';
+import { LoadStoryFunc, NavItems, StoryKind } from "../store/types";
 
 interface NavBarProps {
   loadStory: LoadStoryFunc;
@@ -36,8 +36,7 @@ export const NavBar = ({ loading, loadStory }: NavBarProps) => {
                   active ? "text-orange-400" : "text-gray-400 hover:text-white"
                 }`}
                 onClick={() =>
-                  router.push(`/?k=${item.id}`, undefined, { shallow: true })
-                }
+                  router.push(`/?k=${item.id}`, undefined, { shallow: true })}
               >
                 <span className={`${active ? "" : "opacity-0 select-none"}`}>
                   [
@@ -75,7 +74,7 @@ export const NavBar = ({ loading, loadStory }: NavBarProps) => {
           <div>
             <a
               className="flex items-center text-gray-200 hover:underline opacity-80 hover:opacity-100"
-              href="https://twitter.com/share?text=Check out RandHN to browse HackerNews stories!&url=https://rand.hn"
+              href="https://twitter.com/share?text=Check out RandHN to browse HackerNews stories!&url=https://rand.hn%0a%0a(powered by @AxiomFM)"
               target="_blank"
               rel="noopener noreferrer"
               title="Share on Twitter"
