@@ -62,7 +62,9 @@ export const Toolbar = ({
           <div className="opacity-50">|</div>
           <a
             className="text-owhite hover:text-orange-400"
-            href={`https://twitter.com/share?text=${story?.title}&url=${story?.url}`}
+            href={`https://twitter.com/share?text=${
+              story?.title + "%0a(Discovered using https://rand.hn)%0a%0a"
+            }&url=${story?.url}`}
             target="_blank"
             rel="noopener noreferrer"
             title="Share this page"
