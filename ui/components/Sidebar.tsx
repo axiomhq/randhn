@@ -108,7 +108,7 @@ export const Sidebar = ({ className, stats, story, user }: SidebarProps) => {
           ) : null}
         </div>
       ) : null}
-      <div className="flex-1 flex flex-col px-3 space-y-4 pb-16">
+      <div className="flex-1 flex flex-col px-3 space-y-4 pb-48 lg:pb-16">
         <SidebarSection
           title="Recent Submissions"
           refs={stats?.userStats.story}
@@ -132,7 +132,7 @@ export const Sidebar = ({ className, stats, story, user }: SidebarProps) => {
           refs={stats?.domainSiblings}
         />
       </div>
-      <footer className="fixed right-0 bottom-0 w-72 h-12 z-10 bg-owhite border-t-2 border-orange-800 border-opacity-20 p-3 flex items-center justify-end">
+      <footer className="fixed right-0 bottom-0 w-72 h-12 z-10 bg-owhite border-t-2 border-orange-800 border-opacity-20 p-3 hidden lg:flex items-center justify-end">
         <a
           className="flex items-center hover:underline text-orange-800"
           href="https://github.com/axiomhq/randhn"

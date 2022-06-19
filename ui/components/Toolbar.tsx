@@ -106,7 +106,7 @@ export const Toolbar = ({
         </button>
         <div className="opacity-50">|</div>
         <button
-          className={`flex items-center text-orange-400 ${
+          className={`flex items-center ${
             sidebarShowing ? "text-orange-500" : "text-owhite"
           }`}
           title="View sidebar"
