@@ -48,3 +48,16 @@ export type User = {
   created: number;
   karma: number;
 };
+
+export interface NavItem {
+  id: StoryKind;
+  label: string;
+}
+
+export const NavItems: NavItem[] = [
+  { id: "random", label: "Random" },
+  { id: "top", label: "Top" },
+  { id: "new", label: "New" },
+  { id: "best", label: "Best" },
+  { id: "show", label: "ShowHN" },
+];

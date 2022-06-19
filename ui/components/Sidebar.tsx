@@ -2,7 +2,7 @@ import React, { ReactElement } from 'react';
 
 import { Stats, Story, StoryRef, User } from '../store/types';
 import { timeSince, urlify } from '../util';
-import { AxiomIcon, CalendarIcon, GitHubIcon, LinkIcon, LotusIcon, TweetIcon } from './Icons';
+import { AxiomIcon, CalendarIcon, GitHubIcon, LinkIcon, LotusIcon } from './Icons';
 
 interface SidebarProps {
   story?: Story;
@@ -34,7 +34,7 @@ export const Sidebar = ({ className, stats, story, user }: SidebarProps) => {
   }
   return (
     <aside
-      className={`${className} fixed top-0 right-0 z-10 w-72 font-mono text-xs space-y-4 overflow-y-auto`}
+      className={`${className} font-mono text-xs space-y-4 overflow-y-auto`}
       style={{
         height: "calc(100vh - 32px)",
         marginTop: 32,
@@ -80,7 +80,7 @@ export const Sidebar = ({ className, stats, story, user }: SidebarProps) => {
                 }}
               >
                 <div
-                  className={`text-orange-900 breakWords max-h-32 overflow-y-auto scroll-y-none ${
+                  className={`text-orange-900 breakWords max-h-32 overflow-y-auto scroll-y-none break-words ${
                     user.about?.length > 0 ? "mb-2" : "mb-0"
                   }`}
                   dangerouslySetInnerHTML={{

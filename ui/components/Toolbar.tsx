@@ -1,43 +1,54 @@
+import classNames from 'classnames';
 import React from 'react';
 
-import { Story } from '../store/types';
+import { LoadStoryFunc, Story, StoryKind } from '../store/types';
 import { copyText } from '../util';
-import { CopyIcon, GlobeIcon, LinkIcon, TweetIcon } from './Icons';
+import { CopyIcon, GlobeIcon, LinkIcon, MenuIcon, TweetIcon } from './Icons';
+import styles from './Toolbar.module.css';
 
 interface ToolbarProps {
   story?: Story;
   url?: string;
   className?: string;
+  loadStory: LoadStoryFunc;
+  kind: StoryKind;
+  toggleSidebar: () => void;
+  sidebarShowing: boolean;
 }
 
-export const Toolbar = ({ story }: ToolbarProps) => {
+export const Toolbar = ({
+  story,
+  loadStory,
+  kind,
+  toggleSidebar,
+  sidebarShowing,
+}: ToolbarProps) => {
   return (
     <menu
-      className="z-30 fixed left-0 bottom-0 mx-3 my-2 flex items-center space-x-2"
-      style={{
-        width: "calc(100vw - 300px)",
-        maxWidth: "calc(100vw - 300px)",
-      }}
+      className={classNames(
+        styles.root,
+        "z-30 fixed left-0 bottom-0 mx-3 my-2 flex justify-between lg:justify-start items-center space-x-2"
+      )}
     >
-      <Item className="flex-1">
-        <div className="flex-1 flex items-center space-x-2">
+      <Item className="flex-0 lg:flex-1 hidden lg:flex">
+        <div className="flex-0 lg:flex-1 flex items-center space-x-2">
           <span className="uppercase opacity-80">
             <GlobeIcon />
           </span>
-          <span className="inline-block text-owhite break-all overflow-hidden max-h-4 w-full pr-4">
+          <span className="hidden lg:inline-block text-owhite break-all overflow-hidden max-h-4 w-full pr-4">
             {story?.url || ""}
           </span>
         </div>
         <div className="flex items-center space-x-3">
           <a
-            className="text-owhite hover:text-orange-400 cursor-pointer"
+            className="hidden lg:inline-block text-owhite hover:text-orange-400 cursor-pointer"
             onClick={() => copyText(story?.url ?? "")}
             title="Copy link"
             aria-label="Copy link to clipboard"
           >
             <CopyIcon />
           </a>
-          <div className="opacity-50">|</div>
+          <div className="hidden lg:inline-block opacity-50">|</div>
           <a
             className="text-owhite hover:text-orange-400"
             href={story?.url}
@@ -51,7 +62,9 @@ export const Toolbar = ({ story }: ToolbarProps) => {
           <div className="opacity-50">|</div>
           <a
             className="text-owhite hover:text-orange-400"
-            href={`https://twitter.com/share?text=${story?.title}&url=${story?.url}`}
+            href={`https://twitter.com/share?text=${
+              story?.title + "%0a(Discovered using https://rand.hn)%0a%0a"
+            }&url=${story?.url}`}
             target="_blank"
             rel="noopener noreferrer"
             title="Share this page"
@@ -61,9 +74,9 @@ export const Toolbar = ({ story }: ToolbarProps) => {
         </div>
       </Item>
       <Item className="flex-0">
-        <span className="opacity-80 font-bold mr-1">HN</span>
+        <span className="hidden lg:block opacity-80 font-bold">HN</span>
         <a
-          className="flex items-center space-x-2 text-owhite hover:text-orange-400"
+          className="flex flex-col-reverse lg:flex-row items-center lg:space-x-2 text-owhite hover:text-orange-400"
           href={`https://news.ycombinator.com/item?id=${story?.id}`}
           title="View in HN"
           aria-label="View Hacker News thread"
@@ -73,7 +86,7 @@ export const Toolbar = ({ story }: ToolbarProps) => {
         </a>
         <div className="opacity-50">|</div>
         <a
-          className="flex items-center space-x-2 hover:text-orange-400"
+          className="flex flex-col-reverse lg:flex-row items-center lg:space-x-2 hover:text-orange-400"
           href={`https://news.ycombinator.com/item?id=${story?.id}`}
           title="View Comments"
           aria-label="View story comments"
@@ -82,7 +95,27 @@ export const Toolbar = ({ story }: ToolbarProps) => {
           <span className="font-bold">{story?.descendants}</span>
         </a>
       </Item>
-      <div className="p-1"></div>
+      <Item className="flex-0 block lg:hidden">
+        <button
+          className="flex items-center"
+          title="Next story"
+          aria-label="Next story"
+          onClick={() => loadStory(kind)}
+        >
+          <span className="font-semibold uppercase">Next Story</span>
+        </button>
+        <div className="opacity-50">|</div>
+        <button
+          className={`flex items-center text-orange-400 ${
+            sidebarShowing ? "text-orange-500" : "text-owhite"
+          }`}
+          title="View sidebar"
+          aria-label="View sidebar"
+          onClick={() => toggleSidebar()}
+        >
+          <MenuIcon />
+        </button>
+      </Item>
     </menu>
   );
 };
