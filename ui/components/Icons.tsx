@@ -2,6 +2,41 @@ export interface IconProps {
   className?: string;
 }
 
+export const MenuIcon = ({ className }: IconProps) => {
+  return (
+    <svg
+      className={className}
+      width="24px"
+      height="24px"
+      viewBox="0 0 24 24"
+      fill="none"
+      xmlns="http://www.w3.org/2000/svg"
+    >
+      <path
+        stroke="currentColor"
+        strokeLinecap="round"
+        strokeLinejoin="round"
+        strokeWidth="1.5"
+        d="M4.75 5.75H19.25"
+      ></path>
+      <path
+        stroke="currentColor"
+        strokeLinecap="round"
+        strokeLinejoin="round"
+        strokeWidth="1.5"
+        d="M4.75 18.25H19.25"
+      ></path>
+      <path
+        stroke="currentColor"
+        strokeLinecap="round"
+        strokeLinejoin="round"
+        strokeWidth="1.5"
+        d="M4.75 12H19.25"
+      ></path>
+    </svg>
+  );
+};
+
 // <!--! Font Awesome Pro 6.1.1 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license (Commercial License) Copyright 2022 Fonticons, Inc. -->
 export const GitHubIcon = ({ className }: IconProps) => {
   return (

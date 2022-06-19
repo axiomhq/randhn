@@ -1,20 +1,7 @@
 import { useRouter } from 'next/router';
 import React, { useState } from 'react';
 
-import { LoadStoryFunc, StoryKind } from '../store/types';
-
-interface NavItem {
-  id: StoryKind;
-  label: string;
-}
-
-const navItems: NavItem[] = [
-  { id: "random", label: "Random" },
-  { id: "top", label: "Top" },
-  { id: "new", label: "New" },
-  { id: "best", label: "Best" },
-  { id: "show", label: "ShowHN" },
-];
+import { LoadStoryFunc, NavItems, StoryKind } from '../store/types';
 
 interface NavBarProps {
   loadStory: LoadStoryFunc;
@@ -24,7 +11,7 @@ interface NavBarProps {
 export const NavBar = ({ loading, loadStory }: NavBarProps) => {
   const router = useRouter();
   const activeStoryType =
-    [...navItems.map((i) => i.id)].find((i) => i === router.query.k) || "top";
+    [...NavItems.map((i) => i.id)].find((i) => i === router.query.k) || "top";
 
   return (
     <nav
@@ -38,7 +25,7 @@ export const NavBar = ({ loading, loadStory }: NavBarProps) => {
         </div>
         <div className="text-gray-500 font-bold">&nbsp;&nbsp;/&nbsp;</div>
         <div className="flex items-center space-x-0">
-          {navItems.map((item) => {
+          {NavItems.map((item) => {
             const active = item.id === activeStoryType;
 
             return (
@@ -63,7 +50,7 @@ export const NavBar = ({ loading, loadStory }: NavBarProps) => {
           })}
         </div>
       </div>
-      <div className="grow flex items-center space-x-2">
+      <div className="grow hidden lg:flex items-center space-x-2">
         <button
           className={`uppercase ${
             loading
@@ -94,7 +81,7 @@ export const NavBar = ({ loading, loadStory }: NavBarProps) => {
               aria-label="Share on Twitter"
             >
               <span className="text-red-500 mr-2 text-lg">♥</span>
-              Share RandHN
+              <span className="hidden lg:inline-block">Share RandHN</span>
             </a>
           </div>
         </div>

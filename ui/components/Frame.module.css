@@ -1,0 +1,6 @@
+.root {
+  width: 100%;
+  max-width: 100%;
+  height: calc(100vh - 32px);
+  margin-top: 32px;
+}

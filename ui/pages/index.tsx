@@ -1,20 +1,24 @@
-import type { NextPage } from "next";
 import Head from 'next/head';
-import React, { useState } from 'react';
+import { useRouter } from 'next/router';
+import React from 'react';
 
 import { Frame } from '../components/Frame';
-import { SpinnerIcon } from '../components/Icons';
+import { MenuIcon, SpinnerIcon } from '../components/Icons';
 import { NavBar } from '../components/NavBar';
 import { Sidebar } from '../components/Sidebar';
-import { APIResult, ExtendedAPIResult, Stats, Story, StoryKind, User } from '../store/types';
+import { Toolbar } from '../components/Toolbar';
+import { ExtendedAPIResult, NavItems, Stats, Story, StoryKind, User } from '../store/types';
 import { fetchWithTimeout } from '../util';
 
+import type { NextPage } from "next";
 interface HomeState {
   currentStory?: Story;
   currentStats?: Stats;
   currentUser?: User;
+  currentKind: StoryKind;
   lastError?: string;
   loading: boolean;
+  sidebarShowing: boolean;
 }
 
 class Home extends React.Component<NextPage, HomeState> {
@@ -23,16 +27,28 @@ class Home extends React.Component<NextPage, HomeState> {
 
     this.state = {
       loading: false,
+      currentKind: "top",
+      sidebarShowing: false,
     };
   }
 
   componentDidMount = () => {
-    this.loadStory("top");
+    const type = new URLSearchParams(window.location.search).get("t");
+    const activeStoryType =
+      [...NavItems.map((i) => i.id)].find((i) => i === type) || "top";
+    this.loadStory(activeStoryType);
   };
 
   render() {
-    const { currentStory, currentStats, currentUser, loading, lastError } =
-      this.state;
+    const {
+      currentStory,
+      currentStats,
+      currentUser,
+      loading,
+      lastError,
+      currentKind,
+      sidebarShowing,
+    } = this.state;
     return (
       <div className="bg-white">
         <Head>
@@ -58,13 +74,20 @@ class Home extends React.Component<NextPage, HomeState> {
               className={`${loading ? "animate-spin" : ""} text-orange-800`}
             />
           </div>
-          <Frame
-            className="flex-1"
-            url={currentStory?.url}
+          <Toolbar
             story={currentStory}
+            loadStory={this.loadStory}
+            kind={currentKind}
+            toggleSidebar={this.toggleSidebar}
+            sidebarShowing={sidebarShowing}
           />
+          <Frame className="" url={currentStory?.url} story={currentStory} />
           <Sidebar
-            className="flex-0 bg-orange-50"
+            className={`fixed top-0 right-0 w-full lg:w-72 flex-0 bg-orange-50 transition-transform ${
+              sidebarShowing
+                ? "translate-y-0"
+                : "translate-y-full lg:translate-y-0"
+            }`}
             story={currentStory}
             stats={currentStats}
             user={currentUser}
@@ -75,6 +98,10 @@ class Home extends React.Component<NextPage, HomeState> {
     );
   }
 
+  toggleSidebar = () => {
+    this.setState({ sidebarShowing: !this.state.sidebarShowing });
+  };
+
   loadStory = async (storyType: StoryKind) => {
     if (this.state.loading) {
       return;
@@ -83,6 +110,7 @@ class Home extends React.Component<NextPage, HomeState> {
     this.setState({
       lastError: undefined,
       loading: true,
+      currentKind: storyType,
     });
 
     try {

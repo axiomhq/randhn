@@ -1,0 +1,11 @@
+.root {
+  width: calc(100vw - 24px);
+  max-width: calc(100vw - 24px);
+}
+
+@media (min-width: 1024px) {
+  .root {
+  width: calc(100vw - 316px);
+  max-width: calc(100vw - 316px);
+  }
+}

@@ -1,7 +1,8 @@
+import classNames from 'classnames';
 import React from 'react';
 
 import { Story } from '../store/types';
-import { CopyIcon, GlobeIcon, LinkIcon, TweetIcon } from './Icons';
+import styles from './Frame.module.css';
 import { Toolbar } from './Toolbar';
 
 interface FrameProps {
@@ -13,15 +14,14 @@ interface FrameProps {
 export const Frame = ({ className, url, story }: FrameProps) => {
   return (
     <article
-      className="flex-1 border-r-2 border-orange-800 border-opacity-20 mr-72"
-      style={{
-        height: "calc(100vh - 32px)",
-        marginTop: 32,
-      }}
+      className={classNames(
+        className,
+        styles.root,
+        `flex-1 border-0 lg:border-r-2 border-orange-800 border-opacity-20 lg:mr-72`
+      )}
     >
-      <Toolbar story={story} />
       <iframe
-        className={`${className} w-full h-full border-none p-0 m-0 `}
+        className="w-full h-full border-none p-0 m-0"
         src={url}
         title={story?.title}
       ></iframe>
