@@ -15,13 +15,14 @@ export const NavBar = ({ loading, loadStory }: NavBarProps) => {
 
   return (
     <nav
-      className="fixed top-0 left-0 right-0 bg-gray-800 border-b-2 border-orange-800 border-opacity-20 flex flex-row items-center font-mono text-white text-xs pt-0.5 px-4 z-50"
+      className="fixed top-0 left-0 right-0 bg-gray-800 border-b-2 border-orange-800 border-opacity-20 flex flex-row items-center font-mono text-owhite text-xs pt-0.5 px-4 z-50"
       style={{ height: 32 }}
     >
       <div className="grow flex items-center justify-start">
         <div className="font-medium tracking-wider">
-          RAND
+          rand<span className="text-gray-300">(</span>
           <span className="text-orange-500">HN</span>
+          <span className="text-gray-300">)</span>
         </div>
         <div className="text-gray-500 font-bold">&nbsp;&nbsp;/&nbsp;</div>
         <div className="flex items-center space-x-0">
