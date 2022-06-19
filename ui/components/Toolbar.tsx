@@ -1,10 +1,10 @@
-import classNames from 'classnames';
-import React from 'react';
+import classNames from "classnames";
+import React from "react";
 
-import { LoadStoryFunc, Story, StoryKind } from '../store/types';
-import { copyText } from '../util';
-import { CopyIcon, GlobeIcon, LinkIcon, MenuIcon, TweetIcon } from './Icons';
-import styles from './Toolbar.module.css';
+import { LoadStoryFunc, Story, StoryKind } from "../store/types";
+import { copyText } from "../util";
+import { CopyIcon, GlobeIcon, LinkIcon, MenuIcon, TweetIcon } from "./Icons";
+import styles from "./Toolbar.module.css";
 
 interface ToolbarProps {
   story?: Story;
@@ -27,7 +27,7 @@ export const Toolbar = ({
     <menu
       className={classNames(
         styles.root,
-        "z-30 fixed left-0 bottom-0 mx-3 my-2 flex justify-between lg:justify-start items-center space-x-2"
+        "z-30 fixed left-0 bottom-0 mx-3 my-2 flex justify-between lg:justify-start items-center space-x-2",
       )}
     >
       <Item className="flex-0 lg:flex-1 hidden lg:flex">
@@ -63,8 +63,9 @@ export const Toolbar = ({
           <a
             className="text-owhite hover:text-orange-400"
             href={`https://twitter.com/share?text=${
-              story?.title + "%0a(Discovered using https://rand.hn)%0a%0a"
-            }&url=${story?.url}`}
+              story?.title + "%0a%0a-"
+            }&url=${story
+              ?.url}%0a%0a(Discovered using https://rand.hn - powered by @axiomhq)`}
             target="_blank"
             rel="noopener noreferrer"
             title="Share this page"
