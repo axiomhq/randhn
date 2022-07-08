@@ -1,20 +1,9 @@
 // deno-lint-ignore-file no-explicit-any
-import type { NextApiRequest, NextApiResponse } from "next";
-import { useRouter } from "next/router";
 import Client from '@axiomhq/axiom-node';
 import hn from 'node-hn-api';
+import { json } from 'stream/consumers';
+import { APIResult } from '../../store/types';
 
-
-const topHNStoriesURL =
-    "https://hacker-news.firebaseio.com/v0/topstories.json?print=pretty";
-const newHNStoriesURL =
-    "https://hacker-news.firebaseio.com/v0/newstories.json?print=pretty";
-const showHNStoriesURL =
-    "https://hacker-news.firebaseio.com/v0/showstories.json?print=pretty";
-const askHNStoriesURL =
-    "https://hacker-news.firebaseio.com/v0/askstories.json?print=pretty";
-const bestHNStoriesURL =
-    "https://hacker-news.firebaseio.com/v0/beststories.json?print=pretty";
 const HNItemURL =
     "https://hacker-news.firebaseio.com/v0/item/{id}.json?print=pretty";
 
@@ -277,35 +266,19 @@ async function checkFrame(story: HNItem): Promise<boolean> {
     }
 }
 
-export default async function handler(
-    req: NextApiRequest,
-    resp: NextApiResponse,
-) {
-    const path = req.query.path as string;
-    // extract kind from params
-    // eslint-disable-next-line react-hooks/rules-of-hooks
-    const { query } = useRouter();
 
-    const kind = query.kind as string ?? "random";
-    const hasStats = query.stats as string ?? "true";
-    const canFrame = query.canFrame as string ?? "false";
-
+export async function randhn(kind: string): Promise<object> {
     const now = Date.now();
-    // get stories
-    const frame = canFrame === "true";
-    let limit = 1;
-    if (frame === true) {
-        limit = 3;
-    }
+    const frame = true;
+    const limit = 3;
     const stories = await getRandomHNStories(kind, limit, frame);
     const selection = stories[Math.floor(Math.random() * stories.length)];
-
 
     console.log("time to get stories:", Date.now() - now);
 
     let stats = {};
 
-    if (hasStats == "true" && selection) {
+    if (selection) {
         const userStatsReq = getUserStats(selection.story);
         const domainSiblingsReq = getDomainStories(selection.story);
 
@@ -320,20 +293,12 @@ export default async function handler(
         };
     }
 
-    // dedup domainSiblings based on url
-
-    switch (path) {
-        case "/":
-            return resp.redirect(302, selection.story.url);
-        case "/json":
-            return resp.status(200).json(
-                {
-                    story: selection.story,
-                    stats: stats,
-                },
-            );
-        default:
-            return resp.status(404)
+    let result = {
+        story: selection.story,
+        stats: stats,
     }
+
+    // jsonify result
+    return result;
 }
 
