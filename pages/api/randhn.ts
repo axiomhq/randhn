@@ -1,30 +1,16 @@
-// deno-lint-ignore-file no-explicit-any
 import Client from '@axiomhq/axiom-node';
-import hn from 'node-hn-api';
-import { json } from 'stream/consumers';
-import { APIResult } from '../../store/types';
-
-const HNItemURL =
-    "https://hacker-news.firebaseio.com/v0/item/{id}.json?print=pretty";
+import {
+    HNItem,
+    InvalidHNItem,
+    fetchAskHNStories,
+    fetchBestHNStories,
+    fetchNewHNStories,
+    fetchShowHNStories,
+    fetchTopHNStories,
+    fetchHNItem
+} from './hn';
 
 const axiom = new Client();
-
-interface HNItem {
-    by: string;
-    descendants: number;
-    id: number;
-    kids: number[];
-    score: number;
-    time: number;
-    title: string;
-    type: string;
-    url: string;
-
-    text?: string;
-    parent?: number;
-    dead?: boolean;
-    deleted?: boolean;
-}
 
 interface Selection {
     minStoryID: number;
@@ -51,27 +37,27 @@ async function getRandomHNStories(
     const fetches: Promise<number[]>[] = [];
     switch (topic) {
         case "top" || null:
-            fetches.push(hn.fetchTopStories(500));
+            fetches.push(fetchTopHNStories());
             break;
         case "new":
-            fetches.push(hn.fetchNewStories(500));
+            fetches.push(fetchNewHNStories());
             break;
         case "show":
-            fetches.push(hn.fetchShowStories(500));
+            fetches.push(fetchShowHNStories());
             break;
         case "ask":
-            fetches.push(hn.fetchAskStories(500));
+            fetches.push(fetchAskHNStories());
             break;
         case "best":
-            fetches.push(hn.fetchBestStories(500));
+            fetches.push(fetchBestHNStories());
             break;
         case "random":
             fetches.push(
-                hn.fetchTopStories(500),
-                hn.fetchNewStories(500),
-                hn.fetchShowStories(500),
-                hn.fetchAskStories(500),
-                hn.fetchBestStories(500),
+                fetchTopHNStories(),
+                fetchNewHNStories(),
+                fetchShowHNStories(),
+                fetchAskHNStories(),
+                fetchBestHNStories(),
             );
             break;
         default:
@@ -104,23 +90,26 @@ async function selectRandomHNStories(
         return ids[index];
     });
 
-    // parallel fetch the stories and check frame
+    // parallel fetch the stories and check frame, filter out nulls
     const stories = await Promise.all(
         randIDs.map(async (id) => {
-            const story = await fetch(HNItemURL.replace("{id}", id.toString()));
-            const item = await story.json();
+            const item = await fetchHNItem(id);
             if (frame) {
                 // checkFrame(item);
                 if (await checkFrame(item)) {
                     return item;
                 }
-                return null;
+                // filter this out
+                return InvalidHNItem;
             }
             return item;
         }),
-    );
+    ).then((items) => {
+        return items.filter((item) => item !== InvalidHNItem);
+    }) as HNItem[];
 
-    const selections: Selection[] = stories.filter((item) => item !== null).map(
+
+    const selections: Selection[] = stories.map(
         (story) => {
             return {
                 minStoryID,
@@ -148,7 +137,7 @@ async function getDomainStories(story: HNItem): Promise<DomainSiblings> {
 
     const domain = new URL(story.url).hostname;
     const domainQueryStr = `
-  ['hackernews']
+  ['hn']
   | where _time >= now(-90d)
   | where type == "story" and url startswith "https://${domain}" and id != ${story.id}
   | project title, url, _time
@@ -197,7 +186,7 @@ interface UserActivity {
 
 async function getUserStats(story: HNItem): Promise<UserActivity> {
     const userQueryStr = `
-  ['hackernews']
+  ['hn']
   | where _time >= now(-90d)
   | where ['by'] == "${story.by}" and ['id'] != ${story.id}
   // FIXME: remove later
