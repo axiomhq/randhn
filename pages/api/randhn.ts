@@ -137,7 +137,7 @@ async function getDomainStories(story: HNItem): Promise<DomainSiblings> {
 
     const domain = new URL(story.url).hostname;
     const domainQueryStr = `
-  ['hackernews']
+  ['hn']
   | where _time >= now(-90d)
   | where type == "story" and url startswith "https://${domain}" and id != ${story.id}
   | project title, url, _time
@@ -186,7 +186,7 @@ interface UserActivity {
 
 async function getUserStats(story: HNItem): Promise<UserActivity> {
     const userQueryStr = `
-  ['hackernews']
+  ['hn']
   | where _time >= now(-90d)
   | where ['by'] == "${story.by}" and ['id'] != ${story.id}
   // FIXME: remove later
