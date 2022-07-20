@@ -1,6 +1,7 @@
 // Next.js API route support: https://nextjs.org/docs/api-routes/introduction
 import type { NextApiRequest, NextApiResponse } from "next";
-import { APIResult, ExtendedAPIResult, Story, User } from '../../store/types';
+import { APIResult, ExtendedAPIResult, User } from '../../store/types';
+import { randhn } from "./randhn";
 
 export default async function handler(
   req: NextApiRequest,
@@ -24,18 +25,10 @@ export default async function handler(
   }
 }
 
-async function getStory(kind: string): Promise<ExtendedAPIResult | undefined> {
+async function getStory(kind: string): Promise<APIResult | undefined> {
   try {
-    const res = await fetch(
-      `https://randhn.deno.dev/json?kind=${kind}&canFrame=true`,
-      {
-        method: "GET",
-        headers: {
-          "Accept-Encoding": "application/json",
-        },
-      }
-    );
-    return await res.json();
+    const res = await randhn(kind);
+    return res as APIResult;
   } catch (e) {
     console.error(e);
   }
