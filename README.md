@@ -1,13 +1,44 @@
-This is a [Next.js](https://nextjs.org/) project bootstrapped with [`create-next-app`](https://github.com/vercel/next.js/tree/canary/packages/create-next-app).
+# Randhn
+
+Welcome to Randhn!. This is a [Next.js](https://nextjs.org/) project bootstrapped with [`create-next-app`](https://github.com/vercel/next.js/tree/canary/packages/create-next-app).
 
 ## Getting Started
 
-First, run the development server:
+1. Clone the repository:
 
-```bash
-npm run dev
-# or
-yarn dev
+   ```shell
+   git clone https://github.com/axiomhq/randhn.git
+   ```
+
+2. Navigate to the project directory:
+
+   ```shell
+       cd randhn
+
+   ```
+
+3. Copy the .env.example file to .env:
+   ```shell
+     cp .env.example .env
+   ```
+   Make sure to modify the values in the `.env` file to match your environment configuration.
+4. Install the dependencies:
+
+   ```shell
+     npm install
+   ```
+
+   or
+
+   ```shell
+    yarn install
+   ```
+
+5. Run local server
+
+```shell
+  npm run dev or  yarn dev
+
 ```
 
 Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.

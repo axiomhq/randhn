@@ -15,7 +15,7 @@ export async function fetchWithTimeout(
     signal: controller.signal,
   });
   clearTimeout(id);
-  return response;
+  return response.json();
 }
 
 export function timeSince(seconds: number): string {

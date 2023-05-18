@@ -1,17 +1,18 @@
-import classNames from 'classnames';
-import React from 'react';
+import classNames from "classnames";
+import React from "react";
 
-import { Story } from '../store/types';
-import styles from './Frame.module.css';
-import { Toolbar } from './Toolbar';
+import { Story } from "../store/types";
+import styles from "./Frame.module.css";
+import { Toolbar } from "./Toolbar";
 
 interface FrameProps {
   story?: Story;
   url?: string;
   className?: string;
+  onLoad: (state: boolean) => void;
 }
 
-export const Frame = ({ className, url, story }: FrameProps) => {
+export const Frame = ({ className, url, story, onLoad }: FrameProps) => {
   return (
     <article
       className={classNames(
@@ -24,6 +25,7 @@ export const Frame = ({ className, url, story }: FrameProps) => {
         className="w-full h-full border-none p-0 m-0"
         src={url}
         title={story?.title}
+        onLoad={() => onLoad(false)}
       ></iframe>
     </article>
   );
