@@ -2,15 +2,14 @@ import Client from '@axiomhq/axiom-node';
 import {
     HNItem,
     InvalidHNItem,
-    fetchAskHNStories,
-    fetchBestHNStories,
-    fetchNewHNStories,
-    fetchShowHNStories,
-    fetchTopHNStories,
-    fetchHNItem
+    fetchHNItem,
+    fetchHNStories
 } from './hn';
 
-const axiom = new Client();
+const url = process.env.NEXT_AXIOM_URL || 'https://api.axiom.co';
+const apiKey = process.env.NEXT_AXIOM_API_KEY;
+const orgId = process.env.NEXT_AXIOM_ORG_ID;
+const axiom = new Client(url, apiKey, orgId);
 
 interface Selection {
     minStoryID: number;
@@ -32,49 +31,48 @@ interface AxiomEvent {
 async function getRandomHNStories(
     topic: string | null,
     limit: number,
-    frame: boolean,
+    frame: boolean
 ): Promise<Selection[]> {
     const fetches: Promise<number[]>[] = [];
+
     switch (topic) {
-        case "top" || null:
-            fetches.push(fetchTopHNStories());
+        case "top":
+        case null:
+            fetches.push(fetchHNStories("topstories"));
             break;
         case "new":
-            fetches.push(fetchNewHNStories());
+            fetches.push(fetchHNStories("newstories"));
             break;
         case "show":
-            fetches.push(fetchShowHNStories());
+            fetches.push(fetchHNStories("showstories"));
             break;
         case "ask":
-            fetches.push(fetchAskHNStories());
+            fetches.push(fetchHNStories("askstories"));
             break;
         case "best":
-            fetches.push(fetchBestHNStories());
+            fetches.push(fetchHNStories("beststories"));
             break;
         case "random":
             fetches.push(
-                fetchTopHNStories(),
-                fetchNewHNStories(),
-                fetchShowHNStories(),
-                fetchAskHNStories(),
-                fetchBestHNStories(),
+                fetchHNStories("topstories"),
+                fetchHNStories("topstories"),
+                fetchHNStories("topstories"),
+                fetchHNStories("topstories")
             );
             break;
         default:
             throw new Error("Invalid topic");
     }
 
-
     const ids = await Promise.all(fetches);
-    const allIDs = ids.reduce((acc, curr) => { return acc.concat(curr); }, []);
+    const allIDs = ids.flat(); // Use .flat() to flatten the array instead of reduce
 
-    // dedup the array
-    const dedupedStories = allIDs.filter(
-        (item, index) => allIDs.indexOf(item) === index,
-    );
+    // Deduplicate the array using Set
+    const dedupedStories = [...new Set(allIDs)];
 
     return await selectRandomHNStories(dedupedStories, limit, frame);
 }
+
 
 async function selectRandomHNStories(
     ids: number[],
