@@ -137,7 +137,7 @@ export const Sidebar = ({ className, stats, story, user }: SidebarProps) => {
           title="Visit Axiom"
           aria-label="Axiom Twitter account"
         >
-          Best-in-class o11y by <AxiomIcon className="ml-2" />
+          o11y by Axiom <AxiomIcon className="ml-2" />
         </a>
       </footer>
     </aside>
