@@ -1,8 +1,8 @@
-import React, { ReactElement } from 'react';
+import React, { ReactElement } from "react";
 
-import { Stats, Story, StoryRef, User } from '../store/types';
-import { timeSince, urlify } from '../util';
-import { AxiomIcon, CalendarIcon, GitHubIcon, LinkIcon, LotusIcon } from './Icons';
+import { Stats, Story, StoryRef, User } from "../store/types";
+import { timeSince, urlify } from "../util";
+import { AxiomIcon, CalendarIcon, GitHubIcon, LinkIcon, LotusIcon } from "./Icons";
 
 interface SidebarProps {
   story?: Story;
@@ -52,9 +52,7 @@ export const Sidebar = ({ className, stats, story, user }: SidebarProps) => {
       </div>
       {story?.by ? (
         <div className="flex flex-col mb-4 space-y-1 px-3">
-          <label className="uppercase text-xs font-bold text-orange-800 opacity-60">
-            Submission By
-          </label>
+          <label className="uppercase text-xs font-bold text-orange-800 opacity-60">Submission By</label>
           <div className="flex items-center justify-between">
             <a
               className={`text-orange-900 text-sm hover:text-orange-500 hover:underline flex items-center`}
@@ -67,9 +65,7 @@ export const Sidebar = ({ className, stats, story, user }: SidebarProps) => {
                 <LinkIcon />
               </span>
             </a>
-            <span className="text-xs text-orange-900 opacity-70">
-              [{ago} ago]
-            </span>
+            <span className="text-xs text-orange-900 opacity-70">[{ago} ago]</span>
           </div>
           {user ? (
             <div>
@@ -109,22 +105,14 @@ export const Sidebar = ({ className, stats, story, user }: SidebarProps) => {
         </div>
       ) : null}
       <div className="flex-1 flex flex-col px-3 space-y-4 pb-48 lg:pb-16">
-        <SidebarSection
-          title="Recent Submissions"
-          refs={stats?.userStats.story}
-        />
+        <SidebarSection title="Recent Submissions" refs={stats?.userStats.story} />
         <SidebarSection title="Show HNs" refs={stats?.userStats.show} />
         <SidebarSection title="Ask HNs" refs={stats?.userStats.ask} />
         <SidebarSection
           title={
             <span>
               More from{" "}
-              <a
-                className="underline"
-                href={hostURL.toString()}
-                title={`Visit ${host}`}
-                aria-label={`Visit ${host}`}
-              >
+              <a className="underline" href={hostURL.toString()} title={`Visit ${host}`} aria-label={`Visit ${host}`}>
                 {host}
               </a>
             </span>
@@ -141,16 +129,15 @@ export const Sidebar = ({ className, stats, story, user }: SidebarProps) => {
         >
           <GitHubIcon />
         </a>
-        <div className="font-bold text-orange-900 opacity-50">
-          &nbsp;/&nbsp;
-        </div>
+        <div className="font-bold text-orange-900 opacity-50">&nbsp;/&nbsp;</div>
         <a
           className="flex items-center hover:underline text-orange-800 "
-          href="https://twitter.com/AxiomFM"
+          href="https:axiom.co"
+          target="_blank"
           title="Visit Axiom"
           aria-label="Axiom Twitter account"
         >
-          Built by <AxiomIcon className="ml-2" />
+          Best-in-class o11y by <AxiomIcon className="ml-2" />
         </a>
       </footer>
     </aside>
@@ -168,21 +155,14 @@ const SidebarSection = ({ title, refs }: SidebarSectionProps) => {
   refs = (refs || [])
     .slice(0, 5)
     .sort((a, b) => b._time.localeCompare(a._time))
-    .filter(
-      (a) =>
-        a.data.title?.length > 0 &&
-        a.data.url?.length > 0 &&
-        a.data.title?.length > 0
-    );
+    .filter((a) => a.data.title?.length > 0 && a.data.url?.length > 0 && a.data.title?.length > 0);
   if (!refs || refs.length === 0) {
     return null;
   }
 
   return (
     <div>
-      <label className="uppercase font-bold text-orange-800 opacity-60">
-        {title}
-      </label>
+      <label className="uppercase font-bold text-orange-800 opacity-60">{title}</label>
       <ul className="text-black">
         {refs.map((ref) => (
           <li key={ref.data.url} className="mt-1">
@@ -196,10 +176,7 @@ const SidebarSection = ({ title, refs }: SidebarSectionProps) => {
               aria-label="View story in new tab"
             >
               {" "}
-              <span className="text-orange-800">
-                [{timeSince(Date.parse(ref._time) / 1000)}]
-              </span>{" "}
-              {ref.data.title}
+              <span className="text-orange-800">[{timeSince(Date.parse(ref._time) / 1000)}]</span> {ref.data.title}
             </a>
           </li>
         ))}
