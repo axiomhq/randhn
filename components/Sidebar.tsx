@@ -133,7 +133,6 @@ export const Sidebar = ({ className, stats, story, user }: SidebarProps) => {
         <a
           className="flex items-center hover:underline text-orange-800 "
           href="https:axiom.co"
-          target="_blank"
           title="Visit Axiom"
           aria-label="Axiom Twitter account"
         >
