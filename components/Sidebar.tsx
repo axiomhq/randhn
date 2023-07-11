@@ -132,7 +132,7 @@ export const Sidebar = ({ className, stats, story, user }: SidebarProps) => {
         <div className="font-bold text-orange-900 opacity-50">&nbsp;/&nbsp;</div>
         <a
           className="flex items-center hover:underline text-orange-800 "
-          href="https:axiom.co"
+          href="https://axiom.co"
           title="Visit Axiom"
           aria-label="Axiom Twitter account"
         >
