@@ -258,8 +258,8 @@ async function checkFrame(story: HNItem): Promise<boolean> {
 
 export async function randhn(kind: string): Promise<object> {
     const now = Date.now();
-    const frame = true;
     const limit = 3;
+    const frame = true;
     const stories = await getRandomHNStories(kind, limit, frame);
     const selection = stories[Math.floor(Math.random() * stories.length)];
 
