@@ -76,9 +76,8 @@ export const Sidebar = ({ className, stats, story, user }: SidebarProps) => {
                 }}
               >
                 <div
-                  className={`text-orange-900 breakWords max-h-32 overflow-y-auto scroll-y-none break-words ${
-                    user.about?.length > 0 ? "mb-2" : "mb-0"
-                  }`}
+                  className={`text-orange-900 breakWords max-h-32 overflow-y-auto scroll-y-none break-words ${user.about?.length > 0 ? "mb-2" : "mb-0"
+                    }`}
                   dangerouslySetInnerHTML={{
                     __html: urlify(user.about || ""),
                   }}
@@ -136,7 +135,7 @@ export const Sidebar = ({ className, stats, story, user }: SidebarProps) => {
           title="Visit Axiom"
           aria-label="Axiom Twitter account"
         >
-          o11y by Axiom <AxiomIcon className="ml-2" />
+          sponsored by Axiom <AxiomIcon className="ml-2" />
         </a>
       </footer>
     </aside>

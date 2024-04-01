@@ -221,6 +221,50 @@ async function getUserStats(story: HNItem): Promise<UserActivity> {
     return dict;
 }
 
+async function getSimiliarInteraction(id: number): Promise<HNItem> {
+    const topUsersComments = `
+    ['hn']
+    | where _time >= now(-90d)
+    | where type == "comment" and root == ${id}
+    | summarize count() by ['by']
+    `
+
+    console.log("topUsersComments:", topUsersComments)
+
+    const res = await axiom.datasets.aplQuery(topUsersComments);
+
+    const users: string[] = [];
+    res.buckets.totals.forEach((s: any) => {
+        users.push(s.group.by);
+    });
+    if (users.length === 0) {
+        return
+    }
+
+    console.log("users:", users)
+
+    const topStoriesCommentedByUsers = `
+        ['hn']
+        | where _time >= now(-365d)
+        | where type == "story" and ['by'] in (${users.map((u: any) => `"${u}"`).join(",")})
+        | where title != ""
+        | summarize count() by title, url
+        | limit 5
+        `
+
+    const res2 = await axiom.datasets.aplQuery(topStoriesCommentedByUsers);
+    if (!res2.buckets.totals) {
+        return
+    }
+
+    const stories: any[] = [];
+    res2.buckets.totals.forEach((s: any) => {
+        stories.push(s.group);
+    });
+    return stories;
+}
+
+
 async function checkFrame(story: HNItem): Promise<boolean> {
     try {
         if (story.url === undefined) {
@@ -270,15 +314,18 @@ export async function randhn(kind: string): Promise<object> {
     if (selection) {
         const userStatsReq = getUserStats(selection.story);
         const domainSiblingsReq = getDomainStories(selection.story);
+        const interactionsReq = getSimiliarInteraction(selection.story.id);
 
-        const [userStats, domainSiblings] = await Promise.all([
+        const [userStats, domainSiblings, interactions] = await Promise.all([
             userStatsReq,
             domainSiblingsReq,
+            interactionsReq,
         ]);
 
         stats = {
             userStats: userStats,
             domainSiblings: domainSiblings,
+            interactions: interactions,
         };
     }
 
