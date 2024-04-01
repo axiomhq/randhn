@@ -232,6 +232,9 @@ async function getSimiliarInteraction(id: number): Promise<HNItem> {
     console.log("topUsersComments:", topUsersComments)
 
     const res = await axiom.datasets.aplQuery(topUsersComments);
+    if (!res.buckets.totals) {
+        return
+    }
 
     const users: string[] = [];
     res.buckets.totals.forEach((s: any) => {
