@@ -221,7 +221,13 @@ async function getUserStats(story: HNItem): Promise<UserActivity> {
     return dict;
 }
 
-async function getSimiliarInteraction(id: number): Promise<HNItem> {
+
+interface Story {
+    title: string
+    url: string
+}
+
+async function getSimiliarInteraction(id: number): Promise<Story[]> {
     const topUsersComments = `
     ['hn']
     | where _time >= now(-90d)
@@ -233,7 +239,7 @@ async function getSimiliarInteraction(id: number): Promise<HNItem> {
 
     const res = await axiom.datasets.aplQuery(topUsersComments);
     if (!res.buckets.totals) {
-        return
+        return []
     }
 
     const users: string[] = [];
@@ -241,10 +247,8 @@ async function getSimiliarInteraction(id: number): Promise<HNItem> {
         users.push(s.group.by);
     });
     if (users.length === 0) {
-        return
+        return []
     }
-
-    console.log("users:", users)
 
     const topStoriesCommentedByUsers = `
         ['hn']
@@ -257,13 +261,19 @@ async function getSimiliarInteraction(id: number): Promise<HNItem> {
 
     const res2 = await axiom.datasets.aplQuery(topStoriesCommentedByUsers);
     if (!res2.buckets.totals) {
-        return
+        return []
     }
 
-    const stories: any[] = [];
+    const stories: Story[] = [];
     res2.buckets.totals.forEach((s: any) => {
-        stories.push(s.group);
+        stories.push({
+            title: s.group.title,
+            url: s.group.url,
+        });
     });
+
+    console.log("stories:", stories)
+
     return stories;
 }
 
