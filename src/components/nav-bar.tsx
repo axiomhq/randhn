@@ -1,21 +1,38 @@
-import { useRouter } from "next/router";
-import React, { useState } from "react";
+'use client';
+import { cn } from '@/cn';
+import { useActiveStoryType } from '@/hooks/use-active-story-type';
+import { useStory } from '@/hooks/use-story';
+import React from 'react';
 
-import { LoadStoryFunc, NavItems, StoryKind } from "../store/types";
+export const navItems = [
+  {
+    id: 'random',
+    label: 'Random',
+  },
+  {
+    id: 'top',
+    label: 'Top',
+  },
+  {
+    id: 'new',
+    label: 'New',
+  },
+  {
+    id: 'best',
+    label: 'Best',
+  },
+  {
+    id: 'show',
+    label: 'ShowHN',
+  },
+] as const;
 
-interface NavBarProps {
-  loadStory: LoadStoryFunc;
-  loading: boolean;
-}
-
-export const NavBar = ({ loading, loadStory }: NavBarProps) => {
-  const router = useRouter();
-  const activeStoryType =
-    [...NavItems.map((i) => i.id)].find((i) => i === router.query.k) || "top";
-
+export const NavBar = () => {
+  const { isLoading, isPlaceholderData, refetch } = useStory();
+  const [activeStoryType, setActiveStoryType] = useActiveStoryType();
   return (
     <nav
-      className="fixed top-0 left-0 right-0 bg-gray-800 border-b-2 border-orange-800 border-opacity-20 flex flex-row items-center font-mono text-owhite text-xs pt-0.5 px-4 z-50"
+      className="fixed top-0 left-0 right-0 bg-zinc-800 border-b-2 border-orange-800 border-opacity-20 flex flex-row items-center font-mono text-owhite text-xs pt-0.5 px-4 z-50"
       style={{ height: 32 }}
     >
       <div className="grow flex items-center justify-start">
@@ -26,25 +43,18 @@ export const NavBar = ({ loading, loadStory }: NavBarProps) => {
         </div>
         <div className="text-gray-500 font-bold">&nbsp;&nbsp;/&nbsp;</div>
         <div className="flex items-center space-x-0">
-          {NavItems.map((item) => {
+          {navItems.map((item) => {
             const active = item.id === activeStoryType;
 
             return (
               <button
                 key={item.id}
-                className={`transition-colors ${
-                  active ? "text-orange-400" : "text-gray-400 hover:text-white"
-                }`}
-                onClick={() =>
-                  router.push(`/?k=${item.id}`, undefined, { shallow: true })}
+                className={`transition-colors ${active ? 'text-orange-400' : 'text-gray-400 hover:text-white'}`}
+                onClick={() => void setActiveStoryType(item.id)}
               >
-                <span className={`${active ? "" : "opacity-0 select-none"}`}>
-                  [
-                </span>
+                <span className={`${active ? '' : 'opacity-0 select-none'}`}>[</span>
                 <span>{item.label}</span>
-                <span className={`${active ? "" : "opacity-0 select-none"}`}>
-                  ]
-                </span>
+                <span className={`${active ? '' : 'opacity-0 select-none'}`}>]</span>
               </button>
             );
           })}
@@ -52,21 +62,23 @@ export const NavBar = ({ loading, loadStory }: NavBarProps) => {
       </div>
       <div className="grow hidden lg:flex items-center space-x-2">
         <button
-          className={`uppercase ${
-            loading
-              ? "pointer-events-none animate-pulse"
-              : "pointer-events-auto"
-          }`}
-          onClick={() => loadStory(activeStoryType)}
+          className={cn(
+            'uppercase flex flex-row gap-1',
+            isLoading || isPlaceholderData ? 'pointer-events-none animate-pulse' : 'pointer-events-auto',
+          )}
+          onClick={() => void refetch()}
         >
-          <span className={`text-orange-600`}>&lt;</span>
-          <span className={`text-orange-400`}>&lt;</span>
+          <div>
+            <span className={`text-orange-600`}>&lt;</span>
+            <span className={`text-orange-400`}>&lt;</span>
+          </div>
           <span className="transition-[padding] text-gray-100 hover:px-1 hover:text-bwhite active:px-0 active:text-gray-200">
-            {" "}
-            Spin the Wheel{" "}
+            Spin the Wheel
           </span>
-          <span className={`text-orange-400`}>&gt;</span>
-          <span className={`text-orange-600`}>&gt;</span>
+          <div>
+            <span className={`text-orange-400`}>&gt;</span>
+            <span className={`text-orange-600`}>&gt;</span>
+          </div>
         </button>
       </div>
       <div className="grow text-center flex items-center justify-center space-x-2">

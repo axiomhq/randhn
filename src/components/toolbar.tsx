@@ -1,53 +1,65 @@
-import classNames from "classnames";
-import React from "react";
+'use client';
+import React from 'react';
+import { Icon } from './icons';
+import { cn } from '@/cn';
+import { useStore } from '@tanstack/react-store';
+import { globalStore } from '@/global-store';
+import { useStory } from '@/hooks/use-story';
 
-import { LoadStoryFunc, Story, StoryKind } from "../store/types";
-import { copyText } from "../util";
-import { CopyIcon, GlobeIcon, LinkIcon, MenuIcon, TweetIcon } from "./Icons";
-import styles from "./Toolbar.module.css";
-
-interface ToolbarProps {
-  story?: Story;
-  url?: string;
+type ItemProps = {
+  children: React.ReactNode;
   className?: string;
-  loadStory: LoadStoryFunc;
-  kind: StoryKind;
-  toggleSidebar: () => void;
-  sidebarShowing: boolean;
-}
+};
 
-export const Toolbar = ({
-  story,
-  loadStory,
-  kind,
-  toggleSidebar,
-  sidebarShowing,
-}: ToolbarProps) => {
+const Item = ({ children, className }: ItemProps) => {
+  return (
+    <div
+      className={cn(
+        'backdrop-blur bg-black bg-opacity-70 border border-white border-opacity-40 text-owhite rounded-md px-3 py-2 font-mono font-light text-xs flex items-center space-x-2',
+        className,
+      )}
+      style={{
+        filter: 'drop-shadow(0 2px 1px rgba(196, 131, 110, 0.1))',
+      }}
+    >
+      {children}
+    </div>
+  );
+};
+
+export const Toolbar = () => {
+  const { data: story, refetch } = useStory();
+  const sidebarOpen = useStore(globalStore, (s) => s.sidebarOpen);
   return (
     <menu
-      className={classNames(
-        styles.root,
-        "z-30 fixed left-0 bottom-0 mx-3 my-2 flex justify-between lg:justify-start items-center space-x-2",
+      className={cn(
+        'z-30 fixed left-0 bottom-0 mx-3 my-2 flex justify-between lg:justify-start items-center space-x-2',
+        'w-[calc(100dvw-24px)] max-w-[calc(100dvw-24px)]',
+        'lg:w-[calc(100dvw-316px)] lg:max-w-[calc(100dvw-316px)]',
       )}
     >
       <Item className="flex-0 lg:flex-1 hidden lg:flex">
         <div className="flex-0 lg:flex-1 flex items-center space-x-2">
           <span className="uppercase opacity-80">
-            <GlobeIcon />
+            <Icon name="globe" />
           </span>
           <span className="hidden lg:inline-block text-owhite break-all overflow-hidden max-h-4 w-full pr-4">
-            {story?.url || ""}
+            {story?.url || ''}
           </span>
         </div>
         <div className="flex items-center space-x-3">
-          <a
-            className="hidden lg:inline-block text-owhite hover:text-orange-400 cursor-pointer"
-            onClick={() => copyText(story?.url ?? "")}
+          <button
+            className={cn(
+              'hidden lg:inline-block text-owhite cursor-pointer',
+              story?.url ? 'hover:text-orange-400' : 'text-gray-500',
+            )}
+            onClick={() => navigator.clipboard.writeText(story?.url ?? '')}
             title="Copy link"
             aria-label="Copy link to clipboard"
+            disabled={!story?.url}
           >
-            <CopyIcon />
-          </a>
+            <Icon name="copy" className="active:scale-90" />
+          </button>
           <div className="hidden lg:inline-block opacity-50">|</div>
           <a
             className="text-owhite hover:text-orange-400"
@@ -57,20 +69,19 @@ export const Toolbar = ({
             title="Open in new tab"
             aria-label="Open story in new tab"
           >
-            <LinkIcon />
+            <Icon name="link" />
           </a>
           <div className="opacity-50">|</div>
           <a
             className="text-owhite hover:text-orange-400"
-            href={`https://twitter.com/share?text=${
-              story?.title + "%0a%0a-"
-            }&url=${story
-              ?.url}%0a%0a(discovered via https://rand.hn powered by @AxiomFM)`}
+            href={`https://twitter.com/share?text=${story?.title + '%0a%0a-'}&url=${
+              story?.url
+            }%0a%0a(discovered via https://rand.hn powered by @AxiomFM)`}
             target="_blank"
             rel="noopener noreferrer"
             title="Share this page"
           >
-            <TweetIcon />
+            <Icon name="tweet" />
           </a>
         </div>
       </Item>
@@ -96,45 +107,20 @@ export const Toolbar = ({
           <span className="font-bold">{story?.descendants}</span>
         </a>
       </Item>
-      <Item className="flex-0 block lg:hidden">
-        <button
-          className="flex items-center"
-          title="Next story"
-          aria-label="Next story"
-          onClick={() => loadStory(kind)}
-        >
+      <Item className="flex-0 block lg:hidden flex flex-row">
+        <button className="flex items-center" title="Next story" aria-label="Next story" onClick={() => void refetch()}>
           <span className="font-semibold uppercase">Next Story</span>
         </button>
         <div className="opacity-50">|</div>
         <button
-          className={`flex items-center ${
-            sidebarShowing ? "text-orange-500" : "text-owhite"
-          }`}
+          className={cn('flex items-center', sidebarOpen ? 'text-orange-500' : 'text-owhite')}
           title="View sidebar"
           aria-label="View sidebar"
-          onClick={() => toggleSidebar()}
+          onClick={() => void globalStore.setState((prev) => ({ ...prev, sidebarOpen: !prev.sidebarOpen }))}
         >
-          <MenuIcon />
+          <Icon name="menu" />
         </button>
       </Item>
     </menu>
-  );
-};
-
-interface ItemProps {
-  children: React.ReactNode;
-  className?: string;
-}
-
-const Item = ({ children, className }: ItemProps) => {
-  return (
-    <div
-      className={`${className} backdrop-blur bg-black bg-opacity-70 border border-white border-opacity-40 text-owhite rounded-md px-3 py-2 font-mono fontLight text-xs flex items-center space-x-2`}
-      style={{
-        filter: "drop-shadow(0 2px 1px rgba(196, 131, 110, 0.1))",
-      }}
-    >
-      {children}
-    </div>
   );
 };

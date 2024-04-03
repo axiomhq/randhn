@@ -1,9 +1,0 @@
-{
-  "deno.enable": true,
-  "deno.lint": true,
-  "deno.unstable": false,
-  "editor.formatOnSave": true,
-  "[typescript]": {
-    "editor.defaultFormatter": "vscode.typescript-language-features"
-  }
-}
